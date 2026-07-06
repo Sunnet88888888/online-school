@@ -6,3 +6,13 @@ class InvalidCourseError(DomainError):
 
 class InvalidModuleError(DomainError):
     pass
+
+
+class InvalidSectionError(DomainError):
+    pass
+
+class InvalidLectureError(DomainError):
+    pass
+
+class InvalidUserError(DomainError):
+    pass
