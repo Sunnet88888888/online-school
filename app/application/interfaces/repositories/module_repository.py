@@ -8,4 +8,7 @@ class ModuleRepository(ABC):
     async def get_by_ids(self, module_ids: list[UUID]) -> list[Module]:
         raise NotImplementedError
     
+    @abstractmethod
+    async def add(self, module: Module) -> None:
+        raise NotImplementedError
     

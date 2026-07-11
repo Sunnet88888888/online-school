@@ -10,6 +10,7 @@ class GetLectureQuery:
     lecture_id: UUID
     
 class GetLectureUseCase:
+    
     def __init__(self, lecture_repository: LectureRepository) -> None:
         self.lecture_repository = lecture_repository
     
