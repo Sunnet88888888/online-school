@@ -8,3 +8,5 @@ class CourseNotFoundError(ApplicationError):
 class LectureNotFounError(ApplicationError):
     pass
 
+class ModuleNotFoundError(ApplicationError):
+    pass
