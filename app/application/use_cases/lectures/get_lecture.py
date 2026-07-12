@@ -18,6 +18,6 @@ class GetLectureUseCase:
         lecture = await self.lecture_repository.get_by_id(query.lecture_id)
         
         if lecture is None: 
-            raise LectureNotFounError("LEcture not found.")
+            raise LectureNotFoundError("Lecture not found.")
         
         return lecture
