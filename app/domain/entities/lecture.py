@@ -13,7 +13,7 @@ class Lecture:
     position : int
 
     def __post_init__(self) -> None:
-        self._vslidate()
+        self._validate()
 
     def _validate(self) -> None:
         if not self.title or not self.title.strip():
