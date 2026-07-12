@@ -5,7 +5,7 @@ class ApplicationError(Exception):
 class CourseNotFoundError(ApplicationError):
     pass
 
-class LectureNotFounError(ApplicationError):
+class LectureNotFoundError(ApplicationError):
     pass
 
 class ModuleNotFoundError(ApplicationError):

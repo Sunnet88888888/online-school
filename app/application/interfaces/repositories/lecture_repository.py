@@ -17,3 +17,7 @@ class LectureRepository(ABC):
     @abstractmethod
     async def add(self, lecture: Lecture) -> None:
         raise NotImplementedError
+
+    @abstractmethod
+    async def update(self, lecture: Lecture) -> None:
+        raise NotImplementedError
