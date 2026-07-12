@@ -22,16 +22,3 @@ class GetCourseUseCase:
         if course is None:
             raise CourseNotFoundError("Course not found.")
         return course
-
-@dataclass(slots=True)
-class GetCoursesQuery:
-    pass
-
-
-class GetCoursesUseCase:
-    def __init__(self, course_repository: CourseRepository) -> None:
-        self.course_repository = course_repository
-    
-    async def execute(self, query: GetCourseQuery) -> list[Course]:
-        return await self.course_repository.list()
-    
