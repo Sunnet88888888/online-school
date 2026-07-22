@@ -28,5 +28,25 @@ class SqlAlchemyCourseRepository(CourseRepository):
         
         return None if model is None else CourseMapper.to_doamin(model)
     
+    async def list(self) -> list[Course] :
+        stmt = select(CourseModel).options(selectinload(CourseModel.modules))
+        result = await self.session.execute(stmt)
+        return [CourseMapper.to_doamin(model) for model in result.scalars().all()]
+    
+    async def add(self, course: Course) -> None:
+        self.session.add(CourseMapper.to_model(course))
+        await self.session.flush()
+        
+    async def update(self, course: Course) -> None:
+        model = await self.session.get(CourseModel, str(course.id))
+        
+        if model is None:
+            return 
+        
+        model.title = course.title
+        model.description = course.description
+        
+        await self.session.flush()
+            
     
     
