@@ -43,7 +43,7 @@ class SqlAlchemySectionRepository(SectionRepository):
     
 
     async def add(self, section: Section) -> None:
-        self.session.add(SectionMapper.to_domain(section))
+        self.session.add(SectionMapper.to_model(section))
         self.session.flush()
     
     async def update(self, section: Section) -> None:

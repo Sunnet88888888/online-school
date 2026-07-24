@@ -10,7 +10,7 @@ from app.infrastructure.database.mappers.module_mapper import ModuleMapper
 from app.infrastructure.database.models.module_model import ModuleModel
 
 
-class SqlAlchemyModelRepository(ModuleRepository):
+class SqlAlchemyModuleRepository(ModuleRepository):
 
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
@@ -45,7 +45,7 @@ class SqlAlchemyModelRepository(ModuleRepository):
         return [ModuleMapper.to_domain(model) for model in result.scalars.all()]
     
     async def add(self, module: Module) -> None:
-        self.session.add(ModuleMapper.to_domain(module))
+        self.session.add(ModuleMapper.to_model(module))
         await self.session.flush()
         
         
