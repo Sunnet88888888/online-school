@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from app.application.exceptions import ModuleNotFoundError
-from app.application.interfaces.repositories.module_repository import ModuleRepository
+from app.application.interfaces.unit_of_work import UnitOfWork
 from app.domain.entities.module import Module
 
 
@@ -16,22 +16,23 @@ class UpdateModuleCommand:
 
 class UpdateModuleUseCase:
 
-    def __init__(self, module_repository: ModuleRepository) -> None:
-        self.module_repository = module_repository
+    def __init__(self, uow: UnitOfWork) -> None:
+        self.uow = uow
 
     async def execute(self, command: UpdateModuleCommand) -> Module:
+        async with self.uow:
+            module: Module = self.uow.modules.get_by_id(command.module_id)
 
-        module: Module = self.module_repository.get_by_id(command.module_id)
+            if module is None:
+                raise ModuleNotFoundError("Module not found")
 
-        if module is None:
-            raise ModuleNotFoundError
+            module.update(
+                title=command.title,
+                description=command.description,
+                position=command.position,
+            )
 
-        module.update(
-            title=command.title,
-            description=command.description,
-            position=command.position,
-        )
+            await self.uow.modules.update(module)
+            await self.uow.commit()
 
-        await self.module_repository.update(module)
-
-        return module
+            return module

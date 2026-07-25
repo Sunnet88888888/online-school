@@ -2,8 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID, uuid4
 
 from app.application.exceptions import ModuleNotFoundError
-from app.application.interfaces.repositories.module_repository import ModuleRepository
-from app.application.interfaces.repositories.section_repository import SectionRepository
+from app.application.interfaces.unit_of_work import UnitOfWork
 from app.domain.entities.section import Section
 
 
@@ -17,29 +16,35 @@ class CreateSectionCommand:
     
 class CreateSectionUseCase:
     
-    def __init__(self, module_repository: ModuleRepository, section_repository: SectionRepository) -> None:
-        self.module_repository = module_repository
-        self.section_repository = section_repository
+    def __init__(self, uow: UnitOfWork) -> None:
+        self.uow = uow
         
     async def execute(self, command: CreateSectionCommand) -> Section:
+        
+        async with self.uow:
+            module = await self.uow.modules.get_by_id(command.module_id)
+            
+            if module is None:
+                raise ModuleNotFoundError
+            
+            section = Section(
+                id=uuid4(),
+                module_id=command.module_id,
+                title=command.title,
+                description=command.description,
+                position = command.description
+            )
+            
+            module.add_section(section.id)
+            
+            await self.uow.sections.add(section=section)
+            await self.uow.modules.update(module=module)
+            await self.uow.commit()
+            
+            return section
+            
     
-        module = await self.module_repository.get_by_id(command.module_id)
         
-        if module is None:
-            raise ModuleNotFoundError
     
-        section = Section(
-            id=uuid4(),
-            module_id=command.module_id,
-            title=command.title,
-            description=command.description,
-            position = command.description
-        )
         
-        module.add_section(section.id)
-        
-        await self.section_repository.add(section=section)
-        await self.module_repository.update(module=module)
-        
-        return Section
         

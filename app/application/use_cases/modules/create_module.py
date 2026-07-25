@@ -2,8 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID, uuid4
 
 from app.application.exceptions import CourseNotFoundError
-from app.application.interfaces.repositories.course_repository import CourseRepository
-from app.application.interfaces.repositories.module_repository import ModuleRepository
+from app.application.interfaces.unit_of_work import UnitOfWork
 from app.domain.entities.module import Module
 
 @dataclass(slots=True)
@@ -17,29 +16,30 @@ class CreateModuleCommand:
 class CreateModuleUseCase:
     def __init__(
         self, 
-        course_repository: CourseRepository,
-        module_repository: ModuleRepository,
+        uow: UnitOfWork,
     ) -> None:
-        self.course_repository = course_repository
-        self.module_repository = module_repository
+        self.uow = uow 
         
     async def execute(self, command: CreateModuleCommand) -> Module:
         
-        course = await self.course_repository.get_by_id(command.course_id)
-        
-        if course is None:
-            raise CourseNotFoundError("Course not found.")
-        
-        module = Module(
-            id = uuid4(),
-            course_id = course.id,
-            title=command.title,
-            description=command.description,
-            position=command.position,
-        )
-        
-        course.add_module(module.id)
-        
-        await self.module_repository.add(module)
-        await self.course_repository.update(course)
-        return module
+        async with self.uow:
+            course = await self.uow.courses.get_by_id(command.course_id)
+            
+            if course is None:
+                raise CourseNotFoundError("Course not found.")
+            
+            module = Module(
+                        id = uuid4(),
+                        course_id = course.id,
+                        title=command.title,
+                        description=command.description,
+                        position=command.position,
+                    )
+
+            course.add_module(module.id)
+            
+            await self.uow.modules.add(module)
+            await self.uow.courses.update(course)
+            await self.uow.commit()
+            
+            return module
