@@ -12,7 +12,7 @@ class ApiSettings(BaseModel):
 
 class DatabaseSettings(BaseModel):
     url: str
-    echo: str
+    echo: bool
 
 
 class Settings(BaseSettings):
@@ -50,4 +50,4 @@ class Settings(BaseSettings):
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
-    return Settings
+    return Settings()
