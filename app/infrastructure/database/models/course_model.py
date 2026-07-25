@@ -14,5 +14,5 @@ class CourseModel(Base):
         "ModuleModel",
         back_populates="course",
         cascade="all, delete-orphan",
-        order_by="Module.Model.position",
+        order_by="ModuleModel.position",
     )
