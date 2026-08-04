@@ -60,7 +60,7 @@ class GetCourseStructureUseCase:
                 ]
                 section_dtos.append(
                     SectionStructureDTO(
-                        id - section.id,
+                        id = section.id,
                         title=section.title,
                         description=section.description,
                         position=section.position,

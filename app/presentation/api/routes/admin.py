@@ -134,12 +134,13 @@ async def update_module(module_id: UUID, request: UpdateModuleRequest, use_case:
 
 
 
-@router.post("modules/{module_id}/sections", response_model=SectionResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/modules/{module_id}/sections", response_model=SectionResponse, status_code=status.HTTP_201_CREATED)
 async def create_section(module_id: UUID, request:CreateSectionRequest, use_case: CreateSectionUseCase = Depends(get_create_section_use_case)) -> SectionResponse:
+    
     
     result = await use_case.execute(
         CreateSectionCommand(module_id=module_id, title=request.title, description=request.description, position=request.position,))
-    
+   
     return SectionResponse.model_validate(result)
 
 

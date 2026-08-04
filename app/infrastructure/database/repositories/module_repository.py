@@ -20,7 +20,7 @@ class SqlAlchemyModuleRepository(ModuleRepository):
         stmt = (
             select(ModuleModel)
             .options(selectinload(ModuleModel.sections))
-            .where(ModuleModel.id == module_id)
+            .where(ModuleModel.id == str(module_id))
         )
 
         result = await self.session.execute(stmt)
@@ -42,7 +42,7 @@ class SqlAlchemyModuleRepository(ModuleRepository):
         
         result = await self.session.execute(stmt)
         
-        return [ModuleMapper.to_domain(model) for model in result.scalars.all()]
+        return [ModuleMapper.to_domain(model) for model in result.scalars().all()]
     
     async def add(self, module: Module) -> None:
         self.session.add(ModuleMapper.to_model(module))

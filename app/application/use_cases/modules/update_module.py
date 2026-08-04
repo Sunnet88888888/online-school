@@ -21,7 +21,7 @@ class UpdateModuleUseCase:
 
     async def execute(self, command: UpdateModuleCommand) -> Module:
         async with self.uow:
-            module: Module = self.uow.modules.get_by_id(command.module_id)
+            module: Module = await self.uow.modules.get_by_id(command.module_id)
 
             if module is None:
                 raise ModuleNotFoundError("Module not found")

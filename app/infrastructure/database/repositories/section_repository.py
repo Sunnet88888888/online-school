@@ -25,7 +25,7 @@ class SqlAlchemySectionRepository(SectionRepository):
 
         result = await self.session.execute(stmt)
 
-        model = result.scalar_one_or_none
+        model = result.scalar_one_or_none()
 
         return None if model is None else SectionMapper.to_domain(model)
 

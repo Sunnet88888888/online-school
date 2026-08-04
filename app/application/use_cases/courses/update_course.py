@@ -15,20 +15,20 @@ class UpdateCourseCommand:
 
 class UpdateCourseUseCase:
 
-    def __init__(self, uof: UnitOfWork) -> None:
-        self.uof = uof
+    def __init__(self, uow: UnitOfWork) -> None:
+        self.uow = uow
 
     async def execute(self, command: UpdateCourseCommand) -> Course:
 
-        async with self.uof:
+        async with self.uow:
 
-            course = await self.uof.courses.get_by_id(command.course_id)
+            course = await self.uow.courses.get_by_id(command.course_id)
 
             if course is None:
                 raise CourseNotFoundError("Course not found.")
 
             course.update(title=command.title, description=command.description)
 
-            await self.uof.courses.update(course)
-            await self.uof.commit()
+            await self.uow.courses.update(course)
+            await self.uow.commit()
             return course

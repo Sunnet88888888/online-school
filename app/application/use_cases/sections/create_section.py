@@ -25,14 +25,14 @@ class CreateSectionUseCase:
             module = await self.uow.modules.get_by_id(command.module_id)
             
             if module is None:
-                raise ModuleNotFoundError
+                raise ModuleNotFoundError("Module not found")
             
             section = Section(
                 id=uuid4(),
                 module_id=command.module_id,
                 title=command.title,
                 description=command.description,
-                position = command.description
+                position = command.position
             )
             
             module.add_section(section.id)

@@ -12,18 +12,18 @@ class CreateCourseCommand:
 
 class CreateCourseUseCase:
     
-    def __init__(self, uof: UnitOfWork) -> None:
-        self.uof = uof
+    def __init__(self, uow: UnitOfWork) -> None:
+        self.uow = uow
         
     async def execute(self, command: CreateCourseCommand) -> Course:
-        async with self.uof:
+        async with self.uow:
             course = Course(
                 id = uuid4(),
                 title = command.title,
                 description=command.description,
             )
-            await self.uof.courses.add(course)
-            await self.uof.commit()
+            await self.uow.courses.add(course)
+            await self.uow.commit()
             return course
         
         
