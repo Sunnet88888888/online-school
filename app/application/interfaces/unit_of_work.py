@@ -5,6 +5,7 @@ from app.application.interfaces.repositories import (
     LectureRepository,
     SectionRepository,
     ModuleRepository,
+    UserRepository,
 )
 
 
@@ -13,6 +14,8 @@ class UnitOfWork(ABC):
     modules: ModuleRepository
     sections: SectionRepository
     lectures: LectureRepository
+    users: UserRepository
+    
     
     
     @abstractmethod

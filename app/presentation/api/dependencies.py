@@ -18,6 +18,22 @@ from app.application.use_cases.lectures.get_lecture import GetLectureUseCase
 
 from app.infrastructure.database import SessionFactory, SqlAlchemyUnitOfWork 
 
+
+
+
+from app.application.interfaces.services.password_hasher import PasswordHasher
+from app.application.use_cases.auth.register_user import RegisterUserUseCase
+from app.infrastructure.security.password_hasher import PwdlibPasswordHasher
+
+
+
+
+
+
+
+
+
+
 async def get_uow() -> AsyncIterator[SqlAlchemyUnitOfWork]:
     async with SqlAlchemyUnitOfWork(session_factory=SessionFactory) as uow:
         yield uow 
@@ -87,4 +103,11 @@ def get_update_lecture_use_case() -> UpdateLectureUseCase:
     )
     
     
-    
+def get_password_hasher() -> PasswordHasher:
+    return PwdlibPasswordHasher()
+
+def get_register_user_use_case() -> RegisterUserUseCase:
+    return RegisterUserUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory),
+        password_hasher=get_password_hasher(),
+    )
