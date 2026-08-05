@@ -26,7 +26,8 @@ from app.application.use_cases.auth.register_user import RegisterUserUseCase
 from app.infrastructure.security.password_hasher import PwdlibPasswordHasher
 
 
-
+from app.application.interfaces.services.token_service import TokenService
+from app.infrastructure.security.jwt_token_service import JwtTokenService
 
 
 
@@ -116,6 +117,27 @@ def get_register_user_use_case() -> RegisterUserUseCase:
 def get_login_user_case() -> LoginUserUseCase:
     return LoginUserUseCase(
         uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory), password_hasher=get_password_hasher(),
+    )
+    
+
+
+
+def get_token_service() -> TokenService:
+    return JwtTokenService()
+
+
+def get_register_user_use_case() -> RegisterUserUseCase:
+    return RegisterUserUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory),
+        password_hasher=get_password_hasher(),
+    )
+    
+    
+def get_login_user_use_case() -> LoginUserUseCase:
+    return LoginUserUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory),
+        password_hasher=get_password_hasher(),
+        token_service=get_token_service(),
     )
     
     

@@ -27,6 +27,15 @@ from app.presentation.api.schemas.sections import (
 )
 
 
+from app.presentation.api.schemas.auth import(
+    RegisterUserRequest,
+    RegisteredUserResponse,
+    LoginRequest,
+    TokenResponse,
+    
+)
+
+
 __all__ = [
     "CourseListItemResponse",
     "CourseResponse",
@@ -46,4 +55,8 @@ __all__ = [
     "CreateLectureRequest",
     "UpdateLectureRequest",
     "ErrorResponse",
+    "RegisterUserRequest",
+    "RegisteredUserResponse",
+    "LoginRequest",
+    "TokenResponse"
 ]
