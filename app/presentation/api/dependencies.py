@@ -18,7 +18,7 @@ from app.application.use_cases.lectures.get_lecture import GetLectureUseCase
 
 from app.infrastructure.database import SessionFactory, SqlAlchemyUnitOfWork 
 
-
+from app.application.use_cases.auth.login_user import LoginUserUseCase
 
 
 from app.application.interfaces.services.password_hasher import PasswordHasher
@@ -111,3 +111,11 @@ def get_register_user_use_case() -> RegisterUserUseCase:
         uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory),
         password_hasher=get_password_hasher(),
     )
+    
+    
+def get_login_user_case() -> LoginUserUseCase:
+    return LoginUserUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory), password_hasher=get_password_hasher(),
+    )
+    
+    
