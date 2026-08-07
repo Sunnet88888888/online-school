@@ -52,6 +52,7 @@ from app.presentation.api.dependencies import (
     get_update_lecture_use_case,
     get_update_module_use_case,
     get_update_section_use_case,
+    get_current_admin,
 )
 
 from app.presentation.api.schemas import (
@@ -70,7 +71,21 @@ from app.presentation.api.schemas import (
     ErrorResponse,
 )
 
-router = APIRouter(prefix="/admin", tags=["Admin"])
+router = APIRouter(
+    prefix="/admin",
+    tags=["Admin"],
+    dependencies=[Depends(get_current_admin)],
+    responses={
+        401: {
+            "description": "Authentication credentials are missing or invalid.",
+            "model": ErrorResponse,
+        },
+        403: {
+            "description": "Admin access is required.",
+            "model": ErrorResponse,
+        },
+    },
+)
 
 
 @router.post(
@@ -140,8 +155,8 @@ async def updaet_course(
     status_code=status.HTTP_201_CREATED,
     summary="Create module",
     description=(
-            "Creates a new module inside an existing course. "
-            "Modules are used to group sections within a course."
+        "Creates a new module inside an existing course. "
+        "Modules are used to group sections within a course."
     ),
     responses={
         400: {
@@ -175,8 +190,8 @@ async def create_module(
     response_model=ModuleResponse,
     summary="Update module",
     description=(
-            "Updates an existing module by its identifier. "
-            "Allows changing the module title, description and position."
+        "Updates an existing module by its identifier. "
+        "Allows changing the module title, description and position."
     ),
     responses={
         400: {
@@ -212,8 +227,8 @@ async def update_module(
     status_code=status.HTTP_201_CREATED,
     summary="Create section",
     description=(
-            "Creates a new section inside an existing module. "
-            "Sections are used to group lectures within a module."
+        "Creates a new section inside an existing module. "
+        "Sections are used to group lectures within a module."
     ),
     responses={
         400: {
@@ -249,8 +264,8 @@ async def create_section(
     response_model=SectionResponse,
     summary="Update section",
     description=(
-            "Updates an existing section by its identifier. "
-            "Allows changing the section title, description and position."
+        "Updates an existing section by its identifier. "
+        "Allows changing the section title, description and position."
     ),
     responses={
         400: {
@@ -287,8 +302,8 @@ async def update_section(
     status_code=status.HTTP_201_CREATED,
     summary="Create lecture",
     description=(
-            "Creates a new lecture inside an existing section. "
-            "A lecture is the final content item in the course tree."
+        "Creates a new lecture inside an existing section. "
+        "A lecture is the final content item in the course tree."
     ),
     responses={
         400: {
@@ -324,8 +339,8 @@ async def create_lecture(
     response_model=LectureResponse,
     summary="Update lecture",
     description=(
-            "Updates an existing lecture by its identifier. "
-            "Allows changing the lecture title, content and position."
+        "Updates an existing lecture by its identifier. "
+        "Allows changing the lecture title, content and position."
     ),
     responses={
         400: {
