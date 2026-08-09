@@ -35,7 +35,7 @@ async def domain_error_handler(request: Request, exc: Exception) -> JSONResponse
 
 async def application_error_handler(request: Request, exc: Exception) -> JSONResponse:
     return build_error_response(
-        error="domain_error",
+        error="application_error",
         message=str(exc),
         status_code=status.HTTP_400_BAD_REQUEST,
     )
@@ -45,7 +45,7 @@ async def course_not_found_handler(request: Request, exc: Exception) -> JSONResp
     return build_error_response(
         error="course_not_found",
         message=str(exc),
-        status_code=status.HTTP_400_BAD_REQUEST,
+        status_code=status.HTTP_404_NOT_FOUND,
     )
 
 
@@ -78,7 +78,7 @@ async def lecture_not_found_handler(request: Request, exc: Exception)-> JSONResp
 
 async def authentication_error_handler(request:Request, exc: Exception) -> JSONResponse:
     return build_error_response(
-        error="authentication error",
+        error="authentication_error",
         message=str(exc),
         status_code=status.HTTP_401_UNAUTHORIZED,
           
@@ -88,7 +88,7 @@ async def authentication_error_handler(request:Request, exc: Exception) -> JSONR
 
 async def permission_denied_handler(request: Request, exc: Exception) -> JSONResponse:
     return build_error_response(
-        error="Permission denied",
+        error="permission_denied",
         message=str(exc),
         status_code=status.HTTP_403_FORBIDDEN,
     )

@@ -12,7 +12,7 @@ class Course:
     module_ids: list[UUID] = field(default_factory=list)
 
 
-    def __post__init__(self) -> None:
+    def __post_init__(self) -> None:
         self._validate()
 
 
@@ -27,6 +27,7 @@ class Course:
         self.title = title
         self.description = description
         self._validate()
+        
 
     def add_module(self, module_id: UUID) -> None:
         if module_id not in self.module_ids:

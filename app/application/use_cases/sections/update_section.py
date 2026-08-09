@@ -35,6 +35,8 @@ class UpdateSectionUseCase:
             )
         
             await self.uow.sections.update(section=section)
+            await self.uow.commit()
+            
         
             return section
         
