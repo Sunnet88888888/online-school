@@ -34,7 +34,7 @@ class SqlAlchemyLectureRepository(LectureRepository):
     
     async def add(self, lecture: Lecture) -> None:
         self.session.add(LectureMapper.to_model(lecture))
-        self.session.flush()
+        await self.session.flush()
         
     async def update(self, lecture: Lecture) -> None:
         
