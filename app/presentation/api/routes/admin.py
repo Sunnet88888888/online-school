@@ -17,6 +17,10 @@ from app.application.use_cases.lectures.create_lecture import (
     CreateLectureUseCase,
 )
 
+from app.application.use_cases.lectures.delete_lecture import (
+    DeleteLectureCommand,
+    DeleteLectureUseCase,
+)
 from app.application.use_cases.lectures.update_lecture import (
     UpdateLectureCommand,
     UpdateLectureUseCase,
@@ -52,6 +56,7 @@ from app.presentation.api.dependencies import (
     get_update_lecture_use_case,
     get_update_module_use_case,
     get_update_section_use_case,
+    get_delete_lecture_use_case,
     get_current_admin,
 )
 
@@ -369,3 +374,21 @@ async def update_lecture(
     )
 
     return LectureResponse.model_validate(result)
+
+
+@router.delete(
+    "/lecture/{lecture_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete lecture by id",
+    responses={
+        404: {
+            "description": "Lecture was not found.",
+            "model": ErrorResponse,
+        },
+    },
+)
+async def remove_lecture(
+    lecture_id: UUID,
+    use_case: DeleteLectureUseCase = Depends(get_delete_lecture_use_case),
+) -> None:
+    await use_case.execute(DeleteLectureCommand(lecture_id=lecture_id))

@@ -15,6 +15,7 @@ from app.application.use_cases.courses.get_course import GetCourseUseCase
 from app.application.use_cases.courses.get_courses import GetCoursesUseCase
 from app.application.use_cases.courses.get_course_structure import GetCourseStructureUseCase
 from app.application.use_cases.lectures.get_lecture import GetLectureUseCase
+from app.application.use_cases.lectures.delete_lecture import DeleteLectureUseCase
 
 from app.infrastructure.database import SessionFactory, SqlAlchemyUnitOfWork 
 
@@ -122,6 +123,15 @@ def get_update_lecture_use_case() -> UpdateLectureUseCase:
     return UpdateLectureUseCase(
         uow = SqlAlchemyUnitOfWork(session_factory=SessionFactory)
     )
+    
+    
+    
+    
+def get_delete_lecture_use_case() -> DeleteLectureUseCase:
+    return DeleteLectureUseCase(
+        uow = SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+    
     
     
 def get_password_hasher() -> PasswordHasher:
