@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -57,6 +57,12 @@ class SqlAlchemySectionRepository(SectionRepository):
         model.description = section.description
         model.position = section.position
         
+        await self.session.flush()
+        
+    
+    async def remove(self, section_id):
+        stmt = delete(SectionModel).where(SectionModel.id == str(section_id))
+        await self.session.execute(stmt)
         await self.session.flush()
         
         

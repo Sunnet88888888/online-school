@@ -41,6 +41,10 @@ from app.application.use_cases.sections.create_section import (
     CreateSectionUseCase,
 )
 
+from app.application.use_cases.sections.delete_section import (
+    DeleteSectionCommand,
+    DeleteSectionUseCase,
+)
 from app.application.use_cases.sections.update_section import (
     UpdateSectionCommand,
     UpdateSectionUseCase,
@@ -52,6 +56,7 @@ from app.presentation.api.dependencies import (
     get_create_lecture_use_case,
     get_create_module_use_case,
     get_create_section_use_case,
+    get_delete_section_use_case,
     get_update_course_use_case,
     get_update_lecture_use_case,
     get_update_module_use_case,
@@ -76,6 +81,16 @@ from app.presentation.api.schemas import (
     ErrorResponse,
 )
 
+
+
+
+
+
+
+
+
+
+
 router = APIRouter(
     prefix="/admin",
     tags=["Admin"],
@@ -91,6 +106,14 @@ router = APIRouter(
         },
     },
 )
+
+
+
+
+
+
+
+
 
 
 @router.post(
@@ -118,6 +141,22 @@ async def create_course(
     )
 
     return CourseResponse.model_validate(result)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @router.put(
@@ -152,6 +191,20 @@ async def updaet_course(
         )
     )
     return CourseResponse.model_validate(result)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 @router.post(
@@ -190,6 +243,20 @@ async def create_module(
     return ModuleResponse.model_validate(result)
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @router.put(
     "/modules/{module_id}",
     response_model=ModuleResponse,
@@ -224,6 +291,16 @@ async def update_module(
     )
 
     return ModuleResponse.model_validate(result)
+
+
+
+
+
+
+
+
+
+
 
 
 @router.post(
@@ -264,6 +341,14 @@ async def create_section(
     return SectionResponse.model_validate(result)
 
 
+
+
+
+
+
+
+
+
 @router.put(
     "/sections/{section_id}",
     response_model=SectionResponse,
@@ -299,6 +384,14 @@ async def update_section(
     )
 
     return SectionResponse.model_validate(result)
+
+
+
+
+
+
+
+
 
 
 @router.post(
@@ -339,6 +432,44 @@ async def create_lecture(
     return LectureResponse.model_validate(result)
 
 
+
+
+
+
+
+
+
+
+
+@router.delete(
+    "/sections/{section_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete section by id.",
+    description=(
+        "Deletes an existing section by its ID."
+    ),
+    responses={
+        404: {
+            "description": "Domain or application validation error.",
+            "model": ErrorResponse,
+        },
+    },
+)
+async def delete_section(
+    section_id: UUID,
+    use_case: DeleteSectionUseCase = Depends(get_delete_section_use_case),
+) -> None:
+    
+    await use_case.execute(DeleteSectionCommand(section_id=section_id))
+
+
+
+
+
+
+
+
+
 @router.put(
     "/lectures/{lecture_id}",
     response_model=LectureResponse,
@@ -374,6 +505,13 @@ async def update_lecture(
     )
 
     return LectureResponse.model_validate(result)
+
+
+
+
+
+
+
 
 
 @router.delete(

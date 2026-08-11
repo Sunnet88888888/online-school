@@ -9,6 +9,7 @@ from app.application.use_cases.lectures.update_lecture import UpdateLectureUseCa
 from app.application.use_cases.modules.create_module import CreateModuleUseCase
 from app.application.use_cases.modules.update_module import UpdateModuleUseCase
 from app.application.use_cases.sections.create_section import CreateSectionUseCase
+from app.application.use_cases.sections.delete_section import DeleteSectionUseCase
 from app.application.use_cases.sections.update_section import UpdateSectionUseCase
 
 from app.application.use_cases.courses.get_course import GetCourseUseCase
@@ -113,6 +114,17 @@ def get_update_section_use_case() -> UpdateSectionUseCase:
     return UpdateSectionUseCase(
         uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
     )
+    
+    
+    
+    
+def get_delete_section_use_case() -> DeleteSectionUseCase:
+    return DeleteSectionUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+
+
+
     
 def get_create_lecture_use_case() -> CreateLectureUseCase:
     return CreateLectureUseCase(
