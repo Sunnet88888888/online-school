@@ -31,6 +31,7 @@ from app.application.use_cases.modules.create_module import (
     CreateModuleUseCase,
 )
 
+from app.application.use_cases.modules.delete_module import DeleteModuleCommand, DeleteModuleUseCase
 from app.application.use_cases.modules.update_module import (
     UpdateModuleCommand,
     UpdateModuleUseCase,
@@ -56,6 +57,7 @@ from app.presentation.api.dependencies import (
     get_create_lecture_use_case,
     get_create_module_use_case,
     get_create_section_use_case,
+    get_delete_module_use_case,
     get_delete_section_use_case,
     get_update_course_use_case,
     get_update_lecture_use_case,
@@ -291,6 +293,35 @@ async def update_module(
     )
 
     return ModuleResponse.model_validate(result)
+
+
+
+
+
+
+
+@router.delete(
+    "/modules/{module_id}", 
+    status_code=status.HTTP_204_NO_CONTENT, 
+    summary="Deletes module by it's identifier", 
+    responses={
+    404:{
+        "description": "Module was not found.",
+        "model": ErrorResponse,
+    },
+})
+async def delete_module(
+    module_id: UUID, 
+    use_case : DeleteModuleUseCase = Depends(get_delete_module_use_case)
+    ) -> None:
+    await use_case.execute(DeleteModuleCommand(module_id=module_id))
+
+
+
+
+
+
+
 
 
 

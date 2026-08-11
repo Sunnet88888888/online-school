@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -60,6 +60,14 @@ class SqlAlchemyModuleRepository(ModuleRepository):
         model.description = module.description
         model.position = module.position
         
+        await self.session.flush()
+    
+    
+    async def remove(self, module_id: UUID):
+        
+        stmt = delete(ModuleModel).where(ModuleModel.id == str(module_id))
+        
+        await self.session.execute(stmt)
         await self.session.flush()
         
     
