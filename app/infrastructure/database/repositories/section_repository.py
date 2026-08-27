@@ -44,7 +44,7 @@ class SqlAlchemySectionRepository(SectionRepository):
 
     async def add(self, section: Section) -> None:
         self.session.add(SectionMapper.to_model(section))
-        self.session.flush()
+        await self.session.flush()
     
     async def update(self, section: Section) -> None:
         
@@ -61,8 +61,14 @@ class SqlAlchemySectionRepository(SectionRepository):
         
     
     async def remove(self, section_id):
-        stmt = delete(SectionModel).where(SectionModel.id == str(section_id))
-        await self.session.execute(stmt)
+
+        model = await self.session.get(SectionModel, str(section_id))
+                        
+        if model is None:
+            return
+        
+        await self.session.delete(model)
+        
         await self.session.flush()
         
         

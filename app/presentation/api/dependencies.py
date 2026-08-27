@@ -3,6 +3,7 @@ from collections.abc import AsyncIterator
 from fastapi import Depends
 
 from app.application.use_cases.courses.create_course import CreateCourseUseCase
+from app.application.use_cases.courses.delete_course import DeleteCourseUseCase
 from app.application.use_cases.courses.update_course import UpdateCourseUseCase
 from app.application.use_cases.lectures.create_lecture import CreateLectureUseCase
 from app.application.use_cases.lectures.update_lecture import UpdateLectureUseCase
@@ -93,6 +94,13 @@ def get_update_course_use_case() -> UpdateCourseUseCase:
         uow = SqlAlchemyUnitOfWork(session_factory=SessionFactory)
     )
     
+
+def get_delete_course_use_case() -> DeleteCourseUseCase:
+    return DeleteCourseUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+
+
 
 def get_create_module_use_case() -> CreateModuleUseCase:
     return CreateModuleUseCase(

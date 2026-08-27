@@ -50,11 +50,15 @@ class SqlAlchemyLectureRepository(LectureRepository):
         await self.session.flush()
         
     async def remove(self, lecture_id: UUID) -> None:
-        stmt = delete(LectureModel).where(LectureModel.id == str(lecture_id))
-        await self.session.execute(stmt)
+        
+        model = await self.session.get(LectureModel, str(lecture_id))
+                
+        if model is None:
+            return
+        
+        await self.session.delete(model)
+        
         await self.session.flush()
-        
-        
         
         
         

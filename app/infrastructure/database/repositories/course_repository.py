@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -48,6 +48,15 @@ class SqlAlchemyCourseRepository(CourseRepository):
         
         await self.session.flush()
             
-    
+    async def remove(self, course_id: UUID):
+        
+        model = await self.session.get(CourseModel, str(course_id))
+        
+        if model is None:
+            return
+        
+        await self.session.delete(model)
+        
+        await self.session.flush()
     
     

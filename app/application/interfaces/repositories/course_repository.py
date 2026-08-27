@@ -22,4 +22,8 @@ class CourseRepository(ABC):
         raise NotImplementedError
     
     
+    @abstractmethod
+    async def remove(self, course_id: UUID) -> None:
+        raise NotImplementedError
+    
     

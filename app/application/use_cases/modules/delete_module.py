@@ -26,6 +26,8 @@ class DeleteModuleUseCase:
                 raise ModuleNotFoundError("Module not found.")
             
             course = await self.uow.courses.get_by_id(module.course_id)
+            
+            
 
             course.remove_module(command.module_id)
             

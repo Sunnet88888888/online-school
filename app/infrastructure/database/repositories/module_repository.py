@@ -65,9 +65,13 @@ class SqlAlchemyModuleRepository(ModuleRepository):
     
     async def remove(self, module_id: UUID):
         
-        stmt = delete(ModuleModel).where(ModuleModel.id == str(module_id))
+        model = await self.session.get(ModuleModel, str(module_id))
+                
+        if model is None:
+            return
         
-        await self.session.execute(stmt)
+        await self.session.delete(model)
+        
         await self.session.flush()
         
     
