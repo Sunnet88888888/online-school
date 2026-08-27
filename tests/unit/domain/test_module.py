@@ -45,3 +45,64 @@ def test_module_update_changes_fields() -> None:
     assert module.title == 'New title'
     assert module.description == 'New description'
     assert module.position == 2
+    
+    
+
+def test_module_adds_section() -> None:
+    module = Module(
+        id=uuid4(),
+        course_id=uuid4(),
+        title='Module 1',
+        description='Introduction module',
+        position=1,
+    )
+
+    section_id = uuid4()
+    module.add_section(section_id)
+
+    assert section_id in module.section_ids
+    
+    
+def test_module_does_not_add_duplicate_section() -> None:
+    module = Module(
+        id=uuid4(),
+        course_id=uuid4(),
+        title='Module 1',
+        description='Introduction module',
+        position=1,
+    )
+
+    section_id = uuid4()
+    module.add_section(section_id)
+    module.add_section(section_id)  # Attempt to add the same section again
+
+    assert module.section_ids.count(section_id) == 1  # Ensure only one instance exists
+
+def test_module_removes_section() -> None:
+    module = Module(
+        id=uuid4(),
+        course_id=uuid4(),
+        title='Module 1',
+        description='Introduction module',
+        position=1,
+    )
+
+    section_id = uuid4()
+    module.add_section(section_id)
+    module.remove_section(section_id)
+
+    assert section_id not in module.section_ids
+
+def test_module_raises_error_when_removing_nonexistent_section() -> None:
+    module = Module(
+        id=uuid4(),
+        course_id=uuid4(),
+        title='Module 1',
+        description='Introduction module',
+        position=1,
+    )
+
+    section_id = uuid4()
+
+    with pytest.raises(InvalidModuleError):
+        module.remove_section(section_id)

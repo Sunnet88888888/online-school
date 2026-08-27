@@ -52,3 +52,64 @@ def test_course_update_changes_state() -> None:
 
 
 
+def test_course_adds_module() -> None:
+    course = Course(
+        id=uuid4(),
+        title="FastAPI course",
+        description="Clean architecture in practice",
+    )
+
+    module_id = uuid4()
+
+    course.add_module(module_id)
+
+    assert course.module_ids == [module_id]
+    
+    
+
+
+
+def test_course_does_not_add_duplicate_module() -> None:
+    course = Course(
+        id=uuid4(),
+        title="FastAPI course",
+        description="Clean architecture in practice",
+    )
+
+    module_id = uuid4()
+
+    course.add_module(module_id)
+    course.add_module(module_id)
+
+    assert course.module_ids == [module_id]
+    
+
+
+def test_course_removes_module() -> None:
+    course = Course(
+        id=uuid4(),
+        title="FastAPI course",
+        description="Clean architecture in practice",
+    )
+
+    module_id = uuid4()
+
+    course.add_module(module_id)
+    course.remove_module(module_id)
+
+    assert course.module_ids == []
+    
+
+def test_course_raises_error_when_removing_nonexistent_module() -> None:
+    course = Course(
+        id=uuid4(),
+        title="FastAPI course",
+        description="Clean architecture in practice",
+    )
+
+    module_id = uuid4()
+
+    with pytest.raises(InvalidCourseError):
+        course.remove_module(module_id)
+    
+    

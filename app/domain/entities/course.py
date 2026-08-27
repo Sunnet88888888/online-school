@@ -34,4 +34,7 @@ class Course:
             self.module_ids.append(module_id)
 
     def remove_module(self, module_id:UUID) -> None:
-        self.module_ids.remove(module_id)
+        if module_id in self.module_ids:
+            self.module_ids.remove(module_id)
+        else:
+            raise InvalidCourseError(f"Module with ID {module_id} not found in the course.")

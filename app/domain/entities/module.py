@@ -35,4 +35,7 @@ class Module:
             
             
     def remove_section(self, section_id:UUID) -> None:
-        self.section_ids.remove(section_id)
+        if section_id in self.section_ids: 
+            self.section_ids.remove(section_id)
+        else:
+            raise InvalidModuleError(f"Section with ID {section_id} not found in the module.")

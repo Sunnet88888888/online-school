@@ -33,5 +33,8 @@ class Section:
             
             
     def remove_lecture(self, lecture_id: UUID) -> None:
-        self.lecture_ids.remove(lecture_id)
+        if lecture_id in self.lecture_ids:
+            self.lecture_ids.remove(lecture_id)
+        else:
+            raise InvalidSectionError(f"Lecture with ID {lecture_id} not found in the section.")
             
