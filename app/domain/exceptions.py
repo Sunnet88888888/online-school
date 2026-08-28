@@ -23,3 +23,5 @@ class SectionQuestionAlreadyAttachedError(DomainError):
 class SectionQuestionNotAttachedError(DomainError):
     pass
 
+class InvalidQuestionError(DomainError):
+    pass
