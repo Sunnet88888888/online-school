@@ -3,7 +3,7 @@ from enum import StrEnum
 from uuid import UUID
 from collections.abc import Sequence
 
-from app.domain.exceptions import InvalidQuestionError
+from app.domain.exceptions import InvalidQuestionError, QuestionAttemptLimitExceededError
 
 
 class QuestionType(StrEnum):
@@ -85,4 +85,15 @@ class Question:
         
         if self.is_multiple_choice() and correct_options_count < 2:
             raise InvalidQuestionError("A multiple-choice question must have at least two correct answer options.")
+    
+    
+    def can_start_attempt(self, existing_attempts_count: int) -> bool:
+        return existing_attempts_count < self.max_attempts
+    
+    
+    def ensure_attempt_available(self, existing_attempts_count: int) -> None:
+        if not self.can_start_attempt(existing_attempts_count):
+            raise QuestionAttemptLimitExceededError("Question attempt limit has been reached.")
+        
+        
     
