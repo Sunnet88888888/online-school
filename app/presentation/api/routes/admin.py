@@ -450,7 +450,7 @@ async def update_lecture(
 
 
 @router.delete(
-    "/lecture/{lecture_id}",
+    "/lectures/{lecture_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete lecture by id",
     responses={
