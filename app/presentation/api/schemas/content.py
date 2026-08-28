@@ -64,3 +64,11 @@ class ModuleStructureResponse(ModuleBaseResponse):
 
 class CourseStructureResponse(CourseBaseResponse):
     modules: list[ModuleStructureResponse]
+
+
+
+class SectionStructureResponse(SectionBaseResponse):
+    question_ids: list[UUID] = []
+    lectures: list[LectureStructureResponse]
+    
+    
