@@ -25,3 +25,6 @@ class SectionQuestionNotAttachedError(DomainError):
 
 class InvalidQuestionError(DomainError):
     pass
+
+class InvalidAnswerOptionError(DomainError):
+    pass
