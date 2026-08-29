@@ -35,3 +35,10 @@ class InvalidQuestionAttemptError(DomainError):
 
 class QuestionAttemptLimitExceededError(DomainError):
     pass
+
+class InvalidQuestionResultError(DomainError):
+    pass
+
+class QuestionAlreadySolvedError(DomainError):
+    pass
+

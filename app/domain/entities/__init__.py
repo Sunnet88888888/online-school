@@ -6,7 +6,7 @@ from app.domain.entities.module import Module
 from app.domain.entities.question import Question
 from app.domain.entities.section import Section
 from app.domain.entities.user import User, UserRole
-
+from app.domain.entities.question_attempt import QuestionAttempt, QuestionResultStatus
 
 
 
@@ -19,5 +19,7 @@ __all__ = [
     'AnswerOption',
     'User',
     'UserRole',
+    'QuestionAttempt',
+    'QuestionResultStatus',
 ]
 
