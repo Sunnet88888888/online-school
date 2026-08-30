@@ -31,7 +31,7 @@ class CourseAccessService:
             raise CourseNotFoundError("Course not found.")
         
         if not actor.can_manage_platform() and not course.is_owned_by(actor.id):
-            raise PermissionDeniedError("USer cannot manage this course.")
+            raise PermissionDeniedError("User cannot manage this course.")
         
         return course
     

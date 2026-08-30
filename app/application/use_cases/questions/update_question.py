@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from app.application.exceptions import (
-    PermissionDeniedError,
     QuestionAlreadyUsedError,
     QuestionNotFoundError,
 )
