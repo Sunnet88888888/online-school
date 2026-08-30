@@ -5,6 +5,9 @@ from app.application.interfaces.repositories import (
     LectureRepository,
     SectionRepository,
     ModuleRepository,
+    QuestionRepository,
+    AnswerOptionRepository,
+    QuestionAttemptRepository,
     UserRepository,
 )
 
@@ -14,6 +17,9 @@ class UnitOfWork(ABC):
     modules: ModuleRepository
     sections: SectionRepository
     lectures: LectureRepository
+    questions: QuestionRepository
+    answer_options: AnswerOptionRepository
+    question_attempts: QuestionAttemptRepository
     users: UserRepository
     
     
