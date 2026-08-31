@@ -34,7 +34,7 @@ class UpdateAnswerOptionUseCase:
             if answer_option is None:
                 raise AnswerOptionNotFoundError("Answer option not found.")
             
-            question = await self.uow.questions.get_by_id(answer_option.id)
+            question = await self.uow.questions.get_by_id(answer_option.question_id)
             
             if question is None:
                 raise QuestionNotFoundError("Question not found.")
