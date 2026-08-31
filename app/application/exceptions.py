@@ -34,3 +34,5 @@ class QuestionAlreadyUsedError(ApplicationError):
     pass
 
 
+class QuestionAttemptNotFoundError(ApplicationError):
+    pass
