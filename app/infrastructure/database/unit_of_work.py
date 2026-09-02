@@ -1,9 +1,13 @@
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from app.application.interfaces.unit_of_work import UnitOfWork
 from app.infrastructure.database.repositories import (
+    SqlAlchemyAnswerOptionRepository,
     SqlAlchemyCourseRepository,
     SqlAlchemyLectureRepository,
     SqlAlchemyModuleRepository,
+    SqlAlchemyProgressRepository,
+    SqlAlchemyQuestionAttemptRepository,
+    SqlAlchemyQuestionRepository,
     SqlAlchemySectionRepository,
     SqlAlchemyUserRepository,
 )
@@ -33,29 +37,27 @@ class SqlAlchemyUnitOfWork(UnitOfWork):
         self.sections = SqlAlchemySectionRepository(self.session)
         self.lectures = SqlAlchemyLectureRepository(self.session)
         self.users = SqlAlchemyUserRepository(self.session)
+        self.questions = SqlAlchemyQuestionRepository(self.session)
+        self.answer_options = SqlAlchemyQuestionAttemptRepository(self.session)
+        self.progress = SqlAlchemyProgressRepository(self.session)
         return self
-    
-    
+
     async def __aexit__(self, exc_type, exc, tb) -> None:
-        
+
         if self.session is None:
             return
 
         if exc_type is not None:
-            await self.rollback() 
-            
+            await self.rollback()
+
         if self._external_session is None:
             await self.session.close()
             self.session = None
-            
+
     async def commit(self) -> None:
-        if self.session is not None :
+        if self.session is not None:
             await self.session.commit()
-            
+
     async def rollback(self) -> None:
         if self.session is not None:
             await self.session.rollback()
-
-        
-        
-        

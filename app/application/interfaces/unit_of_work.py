@@ -9,7 +9,9 @@ from app.application.interfaces.repositories import (
     AnswerOptionRepository,
     QuestionAttemptRepository,
     UserRepository,
+    ProgressRepository,
 )
+
 
 
 class UnitOfWork(ABC):
@@ -21,6 +23,7 @@ class UnitOfWork(ABC):
     answer_options: AnswerOptionRepository
     question_attempts: QuestionAttemptRepository
     users: UserRepository
+    progress: ProgressRepository
     
     
     
