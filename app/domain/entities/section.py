@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from uuid import UUID
+from collections.abc import Collection
 
 from app.domain.exceptions import (
     InvalidSectionError,
@@ -62,5 +63,14 @@ class Section:
     
     def contains_question(self, question_id: UUID) -> bool:
         return question_id in self.question_ids
+    
+    def can_be_completed(self) -> bool:
+        return bool(self.question_ids)
+    
+    def is_completed_by(self, completed_question_ids: Collection[UUID]) -> bool:
+        if not self.can_be_completed():
+            return False
+        return all(question_id in completed_question_ids for question_id in self.question_ids)
+    
     
     

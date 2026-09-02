@@ -7,7 +7,7 @@ from app.domain.entities.question import Question
 from app.domain.entities.section import Section
 from app.domain.entities.user import User, UserRole
 from app.domain.entities.question_attempt import QuestionAttempt, QuestionResultStatus
-
+from app.domain.entities.progress import Progress
 
 
 __all__ = [
@@ -21,5 +21,6 @@ __all__ = [
     'UserRole',
     'QuestionAttempt',
     'QuestionResultStatus',
+    'Progress',
 ]
 
