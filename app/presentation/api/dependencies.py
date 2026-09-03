@@ -48,6 +48,38 @@ from app.presentation.exceptions import PermissionDeniedError
 
 
 
+from app.application.use_cases.answer_options.create_answer_option import (
+    CreateAnswerOptionUseCase,
+)
+from app.application.use_cases.answer_options.update_answer_option import (
+    UpdateAnswerOptionUseCase,
+)
+from app.application.use_cases.questions.create_question import CreateQuestionUseCase
+from app.application.use_cases.questions.update_question import UpdateQuestionUseCase
+
+
+
+
+
+from app.application.use_cases.question_attempts.get_question_attempt_result import (
+    GetQuestionAttemptResultUseCase,
+)
+from app.application.use_cases.question_attempts.start_question_attempt import (
+    StartQuestionAttemptUseCase,
+)
+from app.application.use_cases.question_attempts.submit_question_answer import (
+    SubmitQuestionAnswerUseCase,
+)
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -240,3 +272,61 @@ async def get_current_admin(current_user: User = Depends(get_current_user)) -> U
     return current_user
 
 
+
+
+
+async def get_current_author_or_admin(
+        current_user: User = Depends(get_current_user),
+) -> User:
+    if not current_user.can_manage_content():
+        raise PermissionDeniedError('Author or admin access is required.')
+    return current_user
+
+
+
+
+
+def get_create_question_use_case() -> CreateQuestionUseCase:
+    return CreateQuestionUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+
+
+def get_update_question_use_case() -> UpdateQuestionUseCase:
+    return UpdateQuestionUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+
+
+def get_create_answer_option_use_case() -> CreateAnswerOptionUseCase:
+    return CreateAnswerOptionUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+
+
+def get_update_answer_option_use_case() -> UpdateAnswerOptionUseCase:
+    return UpdateAnswerOptionUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+    
+    
+    
+    
+    
+    
+def get_start_question_attempt_use_case() -> StartQuestionAttemptUseCase:
+    return StartQuestionAttemptUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+
+
+def get_submit_question_answer_use_case() -> SubmitQuestionAnswerUseCase:
+    return SubmitQuestionAnswerUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+
+
+def get_get_question_attempt_result_use_case() -> GetQuestionAttemptResultUseCase:
+    return GetQuestionAttemptResultUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
