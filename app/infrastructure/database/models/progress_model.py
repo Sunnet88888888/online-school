@@ -12,8 +12,8 @@ class ProgressModel(Base):
     
     
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
-    student_id: Mapped[str] = mapped_column(ForeignKey('users,id', ondelete='CASCADE'))
-    course_id: Mapped[str] = mapped_column(ForeignKey('course.id', ondelete='CASCADE'))
+    student_id: Mapped[str] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
+    course_id: Mapped[str] = mapped_column(ForeignKey('courses.id', ondelete='CASCADE'))
     completed_question_ids: Mapped[list[str]] = mapped_column(
         MutableList.as_mutable(JSON),
         default=list,

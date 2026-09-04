@@ -12,7 +12,7 @@ class QuestionAttemptModel(Base):
     __tablename__ = 'question_attempts'
     
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
-    question_id: Mapped[str] = mapped_column(ForeignKey('question.id', ondelete='CASCADE'))
+    question_id: Mapped[str] = mapped_column(ForeignKey('questions.id', ondelete='CASCADE'))
     student_id: Mapped[str] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
     attempt_number: Mapped[int] = mapped_column(Integer)
     selected_option_ids: Mapped[list[str]] = mapped_column(MutableList.as_mutable(JSON), default=list,)
