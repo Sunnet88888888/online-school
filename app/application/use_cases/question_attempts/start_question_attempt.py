@@ -46,7 +46,7 @@ class StartQuestionAttemptUseCase:
             )
             
             last_attempt = attempts[-1] if attempts else None
-            has_correct_attempt = any(attempt.iscorrect() for attempt in attempts)
+            has_correct_attempt = any(attempt.is_correct() for attempt in attempts)
             can_submit = question.can_start_attempt(
                 existing_attempts_count=len(attempts),
                 has_correct_attempt=has_correct_attempt,
