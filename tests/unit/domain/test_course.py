@@ -55,6 +55,7 @@ def test_course_update_changes_state() -> None:
 def test_course_adds_module() -> None:
     course = Course(
         id=uuid4(),
+        author_id=uuid4(),
         title="FastAPI course",
         description="Clean architecture in practice",
     )
@@ -72,6 +73,7 @@ def test_course_adds_module() -> None:
 def test_course_does_not_add_duplicate_module() -> None:
     course = Course(
         id=uuid4(),
+        author_id=uuid4(),
         title="FastAPI course",
         description="Clean architecture in practice",
     )
@@ -88,6 +90,7 @@ def test_course_does_not_add_duplicate_module() -> None:
 def test_course_removes_module() -> None:
     course = Course(
         id=uuid4(),
+        author_id=uuid4(),
         title="FastAPI course",
         description="Clean architecture in practice",
     )
@@ -103,6 +106,7 @@ def test_course_removes_module() -> None:
 def test_course_raises_error_when_removing_nonexistent_module() -> None:
     course = Course(
         id=uuid4(),
+        author_id=uuid4(),
         title="FastAPI course",
         description="Clean architecture in practice",
     )

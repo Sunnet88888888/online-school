@@ -12,7 +12,8 @@ from app.application.use_cases.sections.delete_section import DeleteSectionComma
 from app.domain.entities.course import Course
 from app.domain.entities.lecture import Lecture
 from app.domain.entities.module import Module
-from app.domain.entities.section import Section 
+from app.domain.entities.section import Section
+from tests.unit.application.test_content_write_use_cases import make_author 
 
 class FakeCourseRepository:
     def __init__(self) -> None:
@@ -126,6 +127,7 @@ class FakeUnitOfWork(UnitOfWork):
 @pytest.fixture
 async def course_tree():
     uow = FakeUnitOfWork()
+    actor = make_author()
 
     # IDs
     course_id = uuid4()
@@ -143,7 +145,9 @@ async def course_tree():
 
     # Course
     course = Course(
+        
         id=course_id,
+        author_id=actor.id,
         title="Test Course",
         description="Test description",
     )
@@ -249,18 +253,19 @@ async def course_tree():
     await uow.lectures.add(lecture_4)
 
     return {
-        "uow": uow,
-        "course": course,
-        "module_a": module_a,
-        "module_b": module_b,
-        "section_a": section_a,
-        "section_b": section_b,
-        "section_c": section_c,
-        "lecture_1": lecture_1,
-        "lecture_2": lecture_2,
-        "lecture_3": lecture_3,
-        "lecture_4": lecture_4,
-    }
+    "uow": uow,
+    "actor": actor,
+    "course": course,
+    "module_a": module_a,
+    "module_b": module_b,
+    "section_a": section_a,
+    "section_b": section_b,
+    "section_c": section_c,
+    "lecture_1": lecture_1,
+    "lecture_2": lecture_2,
+    "lecture_3": lecture_3,
+    "lecture_4": lecture_4,
+}
 
 
 
@@ -275,6 +280,7 @@ async def test_delete_lecture_removes_lecture_from_tree(course_tree):
 
     await use_case.execute(
         DeleteLectureCommand(
+            actor=course_tree["actor"],
             lecture_id=lecture.id,
         )
     )
@@ -309,6 +315,7 @@ async def test_delete_section_removes_section_and_its_lectures(
     await use_case.execute(
         DeleteSectionCommand(
             section_id=section.id,
+            actor=course_tree["actor"],
         )
     )
 
@@ -334,6 +341,7 @@ async def test_delete_module_removes_entire_module_tree(
     await use_case.execute(
         DeleteModuleCommand(
             module_id=module.id,
+            actor=course_tree["actor"],
         )
     )
     assert module.id not in uow.modules.items
@@ -358,6 +366,7 @@ async def test_delete_course_removes_entire_tree(course_tree):
     await use_case.execute(
         DeleteCourseCommand(
             course_id=course.id,
+            actor=course_tree["actor"],
         )
     )
 
@@ -384,11 +393,13 @@ async def test_delete_course_removes_entire_tree(course_tree):
 async def test_delete_course_raises_not_found_if_course_does_not_exist():
     uow = FakeUnitOfWork()
     use_case = DeleteCourseUseCase(uow=uow)
+    actor = make_author()
 
     with pytest.raises(CourseNotFoundError):
         await use_case.execute(
             DeleteCourseCommand(
                 course_id=uuid4(),
+                actor=actor,
             )
         )
     
@@ -397,11 +408,13 @@ async def test_delete_course_raises_not_found_if_course_does_not_exist():
 async def test_delete_module_raises_not_found_if_module_does_not_exist():
     uow = FakeUnitOfWork()
     use_case = DeleteModuleUseCase(uow=uow)
+    actor = make_author()
 
     with pytest.raises(ModuleNotFoundError):
         await use_case.execute(
             DeleteModuleCommand(
                 module_id=uuid4(),
+                actor=actor,
             )
         )
         
@@ -410,11 +423,13 @@ async def test_delete_module_raises_not_found_if_module_does_not_exist():
 async def test_delete_section_raises_not_found_if_section_does_not_exist():
     uow = FakeUnitOfWork()
     use_case = DeleteSectionUseCase(uow=uow)
+    actor = make_author()
 
     with pytest.raises(SectionNotFoundError):
         await use_case.execute(
             DeleteSectionCommand(
                 section_id=uuid4(),
+                actor=actor,
             )
         )
         
@@ -422,11 +437,13 @@ async def test_delete_section_raises_not_found_if_section_does_not_exist():
 async def test_delete_lecture_raises_not_found_if_lecture_does_not_exist():
     uow = FakeUnitOfWork()
     use_case = DeleteLectureUseCase(uow=uow)
+    actor = make_author()
 
     with pytest.raises(LectureNotFoundError):
         await use_case.execute(
             DeleteLectureCommand(
                 lecture_id=uuid4(),
+                actor=actor,
             )
         )
         

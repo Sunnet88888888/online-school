@@ -77,33 +77,33 @@ class SubmitQuestionAnswerUseCase:
                 module = await self.uow.modules.get_by_id(section.module_id)
                 if module is None:
                     raise ModuleNotFoundError("Module not found.")
-                
+
                 progress = await self.uow.progress.get_by_student_and_course(
                     student_id = command.actor.id,
                     course_id = module.course_id,
                 )
-                
+
                 progress_is_new = progress is None
-                
+
                 if progress is None:
                     progress = Progress(
                         id = uuid4(),
                         student_id = command.actor.id,
                         course_id = module.course_id,
                     )    
-                    
+
                 progress_changed = progress.apply_correct_attempt(attempt)
-                
+
                 if progress_changed:
                     progress.sync_section_completion(section)
-                    progress.sync_section_completion(module)
-                    
+                    progress.sync_module_completion(module)
+
                     if progress_is_new:
                         await self.uow.progress.add(progress)
                     else:
                         await self.uow.progress.update(progress)
-                    
-                          
-                    
+
+
+
             await self.uow.commit()
             return attempt
