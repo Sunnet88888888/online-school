@@ -56,7 +56,7 @@ from app.application.use_cases.answer_options.update_answer_option import (
 )
 from app.application.use_cases.questions.create_question import CreateQuestionUseCase
 from app.application.use_cases.questions.update_question import UpdateQuestionUseCase
-
+from app.application.use_cases.questions.delete_question import DeleteQuestionUseCase
 
 
 
@@ -329,4 +329,10 @@ def get_submit_question_answer_use_case() -> SubmitQuestionAnswerUseCase:
 def get_get_question_attempt_result_use_case() -> GetQuestionAttemptResultUseCase:
     return GetQuestionAttemptResultUseCase(
         uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+    
+    
+def get_delete_question_use_case() -> DeleteQuestionUseCase:
+    return DeleteQuestionUseCase(
+        uow = SqlAlchemyUnitOfWork(session_factory=SessionFactory)
     )
