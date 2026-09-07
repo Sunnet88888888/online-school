@@ -52,15 +52,14 @@ class DeleteAnswerOptionUseCase:
                 raise QuestionAlreadyUsedError(
                     "Question already has student attempts and cannot be changed safely."
                 )
+            
+            
+            question.remove_answer_option(command.answer_option_id)
 
-            # Additional check
-
-            answer_options = await self.uow.answer_options.get_by_ids(
+            remaining_options = await self.uow.answer_options.get_by_ids(
                 question.answer_option_ids
             )
-            question.validate_answer_options_configuration(answer_options)
-
-            question.remove_answer_option(command.answer_option_id)
+            question.validate_answer_options_configuration(remaining_options)
 
             await self.uow.questions.update(question)
             await self.uow.answer_options.remove(command.answer_option_id)
