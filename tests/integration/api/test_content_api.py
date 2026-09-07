@@ -2,9 +2,11 @@
 from uuid import uuid4
 import pytest
 
+from app.infrastructure.database.models.answer_option_model import AnswerOptionModel
 from app.infrastructure.database.models.course_model import CourseModel
 from app.infrastructure.database.models.lecture_model import LectureModel
 from app.infrastructure.database.models.module_model import ModuleModel
+from app.infrastructure.database.models.question_model import QuestionModel
 from app.infrastructure.database.models.section_model import SectionModel
 
 from httpx import AsyncClient
@@ -100,10 +102,6 @@ async def test_delete_lecture(
         lecture = await session.get(
             LectureModel,
             seeded_course_tree.lecture_id,
-        )
-        section: SectionModel = await session.get(
-            SectionModel,
-            seeded_course_tree.section_id,
         )
 
     assert lecture is None
@@ -220,4 +218,68 @@ async def test_delete_course_cascades_modules_sections_and_lectures(
     assert lecture is None
     
     
+
+
+@pytest.mark.asyncio
+async def test_answer_option(
+    client,
+    admin_auth_headers,
+    seeded_interactive_tree,
+    session_factory,
+):
+    response = await client.delete(
+        f"/api/admin/answer-options/{seeded_interactive_tree.wrong_option_id}",
+        headers=admin_auth_headers,
+    )
     
+    assert response.status_code == 204
+    
+    async with session_factory() as session:
+        answer_option = await session.get(
+            AnswerOptionModel,
+            seeded_interactive_tree.wrong_option_id,
+        )
+            
+        assert answer_option is None
+        question = await session.get(
+            QuestionModel,
+            seeded_interactive_tree.question_id,
+        )
+        assert question is not None
+        
+    
+    
+
+
+
+@pytest.mark.asyncio
+async def test_delete_question(
+    client,
+    admin_auth_headers,
+    seeded_interactive_tree,
+    session_factory,
+):
+    question_id = seeded_interactive_tree.question_id
+    response = await client.delete(
+        f"/api/admin/questions/{seeded_interactive_tree.question_id}",
+        headers=admin_auth_headers,
+    )
+
+    assert response.status_code == 204
+
+    async with session_factory() as session:
+        question = await session.get(
+            QuestionModel,
+            seeded_interactive_tree.question_id,
+        )
+        
+        section = await session.get(
+            SectionModel, 
+            seeded_interactive_tree.section_id,
+        )
+        
+        await session.refresh(section, ["questions"])
+        section_questions_ids = [q.id for q in section.questions]
+        
+        assert question is None
+        assert question_id not in section_questions_ids

@@ -6,6 +6,7 @@ from app.application.use_cases.answer_options.create_answer_option import (
     CreateAnswerOptionCommand,
     CreateAnswerOptionUseCase,
 )
+from app.application.use_cases.answer_options.delete_answer_option import DeleteAnswerOptionCommand, DeleteAnswerOptionUseCase
 from app.application.use_cases.answer_options.update_answer_option import (
     UpdateAnswerOptionCommand,
     UpdateAnswerOptionUseCase,
@@ -27,6 +28,7 @@ from app.presentation.api.dependencies import (
     get_create_answer_option_use_case,
     get_create_question_use_case,
     get_current_author_or_admin,
+    get_delete_answer_option_use_case,
     get_delete_question_use_case,
     get_update_answer_option_use_case,
     get_update_question_use_case,
@@ -180,6 +182,32 @@ async def delete_question(
         DeleteQuestionCommand(
             actor=actor,
             question_id=question_id,
+        )
+    )
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.delete(
+    "/answer-options/{answer_option_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+        summary="Delete answer option by ID",
+        description="Deletes a answer option by id, deletes if question wasn't used and doesn't have question attempts, also checks conditions before deleting",
+        responses={
+            404: {
+                "description": "Answer option was not found.",
+                "model": ErrorResponse,
+            },
+        },
+)
+async def delete_answer_option(
+    answer_option_id: UUID,
+    actor: User = Depends(get_current_author_or_admin),
+    use_case: DeleteAnswerOptionUseCase = Depends(get_delete_answer_option_use_case),
+) -> Response:
+    await use_case.execute(
+        DeleteAnswerOptionCommand(
+            actor=actor,
+            answer_option_id=answer_option_id,
         )
     )
     return Response(status_code=status.HTTP_204_NO_CONTENT)
