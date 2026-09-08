@@ -10,6 +10,8 @@ from app.application.interfaces.repositories import (
     QuestionAttemptRepository,
     UserRepository,
     ProgressRepository,
+    TaskRepository,
+    TaskAttemptRepository,
 )
 
 
@@ -24,7 +26,8 @@ class UnitOfWork(ABC):
     question_attempts: QuestionAttemptRepository
     users: UserRepository
     progress: ProgressRepository
-    
+    tasks: TaskRepository
+    task_attempts: TaskAttemptRepository
     
     
     @abstractmethod

@@ -36,3 +36,12 @@ class QuestionAlreadyUsedError(ApplicationError):
 
 class QuestionAttemptNotFoundError(ApplicationError):
     pass
+
+
+
+class TaskNotFoundError(ApplicationError):
+    pass
+
+
+class TaskAlreadyUsedError(ApplicationError):
+    pass

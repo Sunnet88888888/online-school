@@ -1,8 +1,10 @@
 from dataclasses import dataclass, field
 from enum import StrEnum
-from uuid import UUID
+from uuid import UUID, uuid4
 import re
 
+
+from app.domain.entities.task_attempt import TaskAttempt, TaskAttemptStatus
 from app.domain.exceptions import (
     InvalidTaskError,
     TaskAlreadySolvedError,
@@ -24,9 +26,9 @@ class Task:
     statement: str
     position: int
     check_type: TaskCheckType = TaskCheckType.EXACT_MATCH
-    expected_answer: str = ''
+    expected_answer: str = ""
     accepted_answers: list[str] = field(default_factory=list)
-    answer_pattern: str = ''
+    answer_pattern: str = ""
     max_attempts: int = 1
     reward_points: int = 1
 
@@ -65,10 +67,6 @@ class Task:
                 re.compile(self.answer_pattern)
             except re.error as exc:
                 raise InvalidTaskError("Task answer_pattern is invalid.") from exc
-     
-
-
-
 
     def update(self, title: str, statement: str, position: int) -> None:
         self.title = title
@@ -108,9 +106,9 @@ class Task:
         return answer.strip()
 
     def is_correct_answer(self, answer: str) -> bool:
-        
+
         normalized_actual = self.normalize_answer(answer)
-        
+
         if self.check_type is TaskCheckType.EXACT_MATCH:
             normalized_expected = self.normalize_answer(self.expected_answer)
             return normalized_actual == normalized_expected
@@ -120,8 +118,8 @@ class Task:
 
         if self.check_type is TaskCheckType.REGEX:
             return re.fullmatch(self.answer_pattern, normalized_actual) is not None
-        
-        raise InvalidTaskError('Unsupported task check type.')
+
+        raise InvalidTaskError("Unsupported task check type.")
 
     def normalized_accepted_answers(self) -> list[str]:
         normalized: list[str] = []
@@ -132,4 +130,40 @@ class Task:
             if value not in normalized:
                 normalized.append(value)
         return normalized
-    
+
+    def next_attempt_number(self, existing_attempts_count: int) -> int:
+        if existing_attempts_count < 0:
+            raise InvalidTaskError("Existing attempts count cannot be negative.")
+        return existing_attempts_count + 1
+
+    def create_attempt(
+        self,
+        student_id: UUID,
+        submitted_answer: str,
+        existing_attempts_count: int,
+        has_correct_attempt: bool = False,
+    ) -> TaskAttempt:
+        self.ensure_attempt_available(
+            existing_attempts_count=existing_attempts_count,
+            has_correct_attempt=has_correct_attempt,
+        )
+        attempt_number = self.next_attempt_number(existing_attempts_count)
+        return TaskAttempt(
+            id=uuid4(),
+            task_id=self.id,
+            student_id=student_id,
+            submitted_answer=submitted_answer,
+            attempt_number=attempt_number,
+        )
+
+    def check_attempt(self, attempt: TaskAttempt) -> None:
+        if attempt.task_id != self.id:
+            raise InvalidTaskError("Attempt does not belong to this task.")
+        is_correct = self.is_correct_answer(attempt.submitted_answer)
+        status = (
+            TaskAttemptStatus.CORRECT 
+            if is_correct 
+            else TaskAttemptStatus.INCORRECT
+        )
+        awarded_points = self.reward_points if is_correct else 0
+        attempt.apply_result(status=status, awarded_points=awarded_points)
