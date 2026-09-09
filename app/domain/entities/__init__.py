@@ -9,6 +9,7 @@ from app.domain.entities.question_attempt import (QuestionAttempt,
 from app.domain.entities.section import Section
 from app.domain.entities.task import Task
 from app.domain.entities.user import User, UserRole
+from app.domain.entities.code_task import CodeTask, CodeTaskLanguage
 
 __all__ = [
     'Course',
@@ -23,4 +24,6 @@ __all__ = [
     'User',
     'UserRole',
     'Progress',
+    'CodeTask',
+    'CodeTaskLanguage',
 ]
