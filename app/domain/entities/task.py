@@ -73,6 +73,29 @@ class Task:
         self.statement = statement
         self.position = position
         self._validate()
+        
+    def reconfigure(
+        self,
+        title: str,
+        statement: str,
+        position: int,
+        check_type: TaskCheckType,
+        expected_answer: str,
+        accepted_answers: list[str],
+        answer_pattern: str,
+        max_attempts: int,
+        reward_points: int,
+    ) -> None:
+        self.title = title
+        self.statement = statement
+        self.position = position
+        self.check_type = check_type
+        self.expected_answer = expected_answer
+        self.accepted_answers = accepted_answers.copy()
+        self.answer_pattern = answer_pattern
+        self.max_attempts = max_attempts
+        self.reward_points = reward_points
+        self._validate()
 
     def allows_multiple_attempts(self) -> bool:
         return self.max_attempts > 1
