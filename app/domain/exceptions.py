@@ -75,3 +75,26 @@ class SectionCodeTaskAlreadyAttachedError(DomainError):
 
 class SectionCodeTaskNotAttachedError(DomainError):
     pass
+
+
+class InvalidCodeSubmissionError(DomainError):
+    pass
+
+
+class CodeSubmissionLimitExceededError(DomainError):
+    pass
+
+
+class CodeTaskAlreadySolvedError(DomainError):
+    pass
+
+
+class InvalidCodeTaskError(DomainError):
+    pass
+
+
+class InvalidTestCaseError(DomainError):
+    pass
+
+class InvalidExecutionResultError(DomainError):
+    pass

@@ -10,6 +10,12 @@ from app.domain.entities.section import Section
 from app.domain.entities.task import Task
 from app.domain.entities.user import User, UserRole
 from app.domain.entities.code_task import CodeTask, CodeTaskLanguage
+from app.domain.entities.code_submission import CodeSubmission, CodeSubmissionStatus
+from app.domain.entities.test_case import TestCase
+
+from app.domain.entities.execution_result import ExecutionResult, ExecutionStatus
+
+
 
 __all__ = [
     'Course',
@@ -26,4 +32,9 @@ __all__ = [
     'Progress',
     'CodeTask',
     'CodeTaskLanguage',
+    'CodeSubmission',
+    'CodeSubmissionStatus',
+    'TestCase',
+    'ExecutionResult',
+    'ExecutionStatus',
 ]
