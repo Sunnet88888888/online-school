@@ -28,3 +28,9 @@ class SectionModel(Base):
         order_by = 'QuestionModel.position',
     )
     
+    tasks = relationship(
+        'TaskModel',
+        back_populates='section',
+        cascade='all, delete-orphan',
+        order_by='TaskModel.position',
+    )
