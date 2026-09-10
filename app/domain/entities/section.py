@@ -100,21 +100,22 @@ class Section:
         return bool(self.question_ids or self.task_ids or self.code_task_ids)
     
     def is_completed_by(
-        self, 
-        completed_question_ids: Collection[UUID],
-        completed_task_ids: Collection[UUID] | None = None,
-        completed_code_task_ids: Collection[UUID] | None = None,
-        ) -> bool:
+            self,
+            completed_question_ids: Collection[UUID],
+            completed_task_ids: Collection[UUID] | None = None,
+            completed_code_task_ids: Collection[UUID] | None = None,
+    ) -> bool:
         if not self.can_be_completed():
             return False
-        
+
         completed_task_ids = completed_task_ids or ()
         completed_code_task_ids = completed_code_task_ids or ()
-           
-        return (all(question_id in completed_question_ids for question_id in self.question_ids)
+
+        return (
+                all(question_id in completed_question_ids for question_id in self.question_ids)
                 and all(task_id in completed_task_ids for task_id in self.task_ids)
                 and all(code_task_id in completed_code_task_ids for code_task_id in self.code_task_ids)
-                )
+        )
         
     def add_code_task(self, code_task_id: UUID) -> None:
         if code_task_id in self.code_task_ids:
