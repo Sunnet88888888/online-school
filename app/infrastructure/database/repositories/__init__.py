@@ -29,6 +29,23 @@ from app.infrastructure.database.repositories.user_repository import (
     SqlAlchemyUserRepository,
 )
 
+
+from app.infrastructure.database.repositories.code_submission_repository import (
+    SqlAlchemyCodeSubmissionRepository,
+)
+from app.infrastructure.database.repositories.code_task_repository import (
+    SqlAlchemyCodeTaskRepository,
+)
+from app.infrastructure.database.repositories.test_case_repository import (
+    SqlAlchemyTestCaseRepository,
+)
+
+
+
+
+
+
+
 __all__ = [
     "SqlAlchemyCourseRepository",
     "SqlAlchemyModuleRepository",
@@ -40,5 +57,8 @@ __all__ = [
     "SqlAlchemyQuestionAttemptRepository",
     'SqlAlchemyTaskRepository',
     'SqlAlchemyTaskAttemptRepository',
-    "SqlAlchemyProgressRepository"
+    "SqlAlchemyProgressRepository",
+    'SqlAlchemyCodeTaskRepository',
+    'SqlAlchemyTestCaseRepository',
+    'SqlAlchemyCodeSubmissionRepository',
 ]

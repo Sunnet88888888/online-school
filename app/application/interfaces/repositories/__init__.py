@@ -11,6 +11,7 @@ from app.application.interfaces.repositories.task_repository import TaskReposito
 from app.application.interfaces.repositories.user_repository import UserRepository
 from app.application.interfaces.repositories.code_task_repository import CodeTaskRepository
 from app.application.interfaces.repositories.test_case_repository import TestCaseRepository
+from app.application.interfaces.repositories.code_submission_repository import CodeSubmissionRepository
 
 
 
@@ -31,4 +32,5 @@ __all__ = [
     'ProgressRepository',
     'CodeTaskRepository',
     'TestCaseRepository',
+    'CodeSubmissionRepository',
 ]

@@ -10,6 +10,9 @@ from app.infrastructure.database.models.section_model import SectionModel
 from app.infrastructure.database.models.task_attempt_model import TaskAttemptModel
 from app.infrastructure.database.models.task_model import TaskModel
 from app.infrastructure.database.models.user_model import UserModel
+from app.infrastructure.database.models.code_submission_model import CodeSubmissionModel
+from app.infrastructure.database.models.code_task_model import CodeTaskModel
+from app.infrastructure.database.models.test_case_model import TestCaseModel
 
 __all__ = [
     'Base',
@@ -24,4 +27,7 @@ __all__ = [
     'TaskModel',
     'TaskAttemptModel',
     'ProgressModel',
+    'CodeSubmissionModel',
+    'CodeTaskModel',
+    'TestCaseModel',
 ]

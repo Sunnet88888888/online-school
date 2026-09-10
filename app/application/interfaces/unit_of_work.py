@@ -14,7 +14,7 @@ from app.application.interfaces.repositories import (
     TaskAttemptRepository,
     CodeTaskRepository,
     TestCaseRepository,
-    
+    CodeSubmissionRepository, 
 )
 
 
@@ -33,6 +33,7 @@ class UnitOfWork(ABC):
     task_attempts: TaskAttemptRepository
     code_tasks: CodeTaskRepository
     test_cases: TestCaseRepository
+    code_submissions: CodeSubmissionRepository
 
     
     
