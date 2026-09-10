@@ -16,12 +16,18 @@ from app.infrastructure.execution.python_submission_bundle_builder import \
 from app.infrastructure.queues.in_memory_submission_queue import InMemorySubmissionQueue
 from app.infrastructure.workers.code_submission_worker import CodeSubmissionWorker
 from app.infrastructure.database.database import SessionFactory
+from app.infrastructure.execution.docker_runner import DockerRunConfig, DockerRunner
+
+
+
 
 
 def build_code_submission_worker() -> CodeSubmissionWorker:
     queue = InMemorySubmissionQueue()
     uow = SqlAlchemyUnitOfWork(session_factory=SessionFactory)
-    runner = DockerRunner()
+    runner = DockerRunner(
+    config=DockerRunConfig(),
+)
     profile_registry = ExecutionProfileRegistry(
         profiles={
             CodeTaskLanguage.PYTHON: ExecutionProfile(
