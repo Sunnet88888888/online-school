@@ -7,7 +7,11 @@ from app.presentation.api.schemas.content import (
     ModuleStructureResponse,
     SectionStructureResponse,
     TaskStructureResponse,
-    CodeTaskStructureResponse
+    CodeTaskStructureResponse,
+    AnswerOptionDetailsResponse,
+    QuestionDetailsResponse,
+    TaskDetailsResponse,
+    CodeTaskDetailsResponse,
 )
 
 from app.presentation.api.schemas.courses import CreateCourseRequest, UpdateCourseRequest
@@ -138,6 +142,11 @@ __all__ = [
     'TaskAttemptResponse',
     'SubmitCodeSubmissionRequest',
     'CodeSubmissionResponse',
+    'AnswerOptionDetailsResponse',
+    'QuestionDetailsResponse',  
+    'TaskDetailsResponse',
+    'CodeTaskDetailsResponse',
+    
     
     
 ]

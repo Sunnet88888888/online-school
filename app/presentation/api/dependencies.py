@@ -97,7 +97,9 @@ from app.application.use_cases.code_submissions.list_code_submissions import (
 )
 
 
-
+from app.application.use_cases.questions.get_question import GetQuestionUseCase
+from app.application.use_cases.tasks.get_task import GetTaskUseCase
+from app.application.use_cases.code_tasks.get_code_task import GetCodeTaskUseCase
 
 
 
@@ -400,3 +402,26 @@ def get_list_code_submissions_use_case() -> ListCodeSubmissionsUseCase:
     return ListCodeSubmissionsUseCase(
         uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
     )
+    
+    
+    
+    
+def get_get_question_use_case(
+        uow: SqlAlchemyUnitOfWork = Depends(get_uow),
+) -> GetQuestionUseCase:
+    return GetQuestionUseCase(
+        question_repository=uow.questions,
+        answer_option_repository=uow.answer_options,
+    )
+
+
+def get_get_task_use_case(
+        uow: SqlAlchemyUnitOfWork = Depends(get_uow),
+) -> GetTaskUseCase:
+    return GetTaskUseCase(task_repository=uow.tasks)
+
+
+def get_get_code_task_use_case(
+        uow: SqlAlchemyUnitOfWork = Depends(get_uow),
+) -> GetCodeTaskUseCase:
+    return GetCodeTaskUseCase(code_task_repository=uow.code_tasks)
