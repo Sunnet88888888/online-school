@@ -116,7 +116,7 @@ class Section:
                 and all(code_task_id in completed_code_task_ids for code_task_id in self.code_task_ids)
                 )
         
-    def addd_code_task(self, code_task_id: UUID) -> None:
+    def add_code_task(self, code_task_id: UUID) -> None:
         if code_task_id in self.code_task_ids:
             raise SectionCodeTaskAlreadyAttachedError(
                 'Section already has this code task attached.'

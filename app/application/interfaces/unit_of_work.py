@@ -12,6 +12,9 @@ from app.application.interfaces.repositories import (
     ProgressRepository,
     TaskRepository,
     TaskAttemptRepository,
+    CodeTaskRepository,
+    TestCaseRepository,
+    
 )
 
 
@@ -28,6 +31,9 @@ class UnitOfWork(ABC):
     progress: ProgressRepository
     tasks: TaskRepository
     task_attempts: TaskAttemptRepository
+    code_tasks: CodeTaskRepository
+    test_cases: TestCaseRepository
+
     
     
     @abstractmethod

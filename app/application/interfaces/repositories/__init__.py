@@ -9,6 +9,13 @@ from app.application.interfaces.repositories.section_repository import SectionRe
 from app.application.interfaces.repositories.task_attempt_repository import TaskAttemptRepository
 from app.application.interfaces.repositories.task_repository import TaskRepository
 from app.application.interfaces.repositories.user_repository import UserRepository
+from app.application.interfaces.repositories.code_task_repository import CodeTaskRepository
+from app.application.interfaces.repositories.test_case_repository import TestCaseRepository
+
+
+
+
+
 
 __all__ = [
     'CourseRepository',
@@ -22,4 +29,6 @@ __all__ = [
     'TaskRepository',
     'TaskAttemptRepository',
     'ProgressRepository',
+    'CodeTaskRepository',
+    'TestCaseRepository',
 ]
