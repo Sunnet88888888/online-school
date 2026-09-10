@@ -22,6 +22,8 @@ class SqlAlchemySectionRepository(SectionRepository):
             .options(
                 selectinload(SectionModel.lectures),
                 selectinload(SectionModel.questions),
+                selectinload(SectionModel.tasks),
+                selectinload(SectionModel.code_tasks),
             )
             .where(SectionModel.id == str(section_id))
         )
@@ -42,6 +44,8 @@ class SqlAlchemySectionRepository(SectionRepository):
             .options(
                 selectinload(SectionModel.lectures),
                 selectinload(SectionModel.questions),
+                selectinload(SectionModel.tasks),
+                selectinload(SectionModel.code_tasks),
             )
             .where(SectionModel.id.in_([str(item) for item in section_ids]))
         )

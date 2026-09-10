@@ -71,7 +71,27 @@ class CourseStructureResponse(CourseBaseResponse):
 
 
 class SectionStructureResponse(SectionBaseResponse):
-    question_ids: list[UUID] = []
+    question_ids: list[UUID]
+    task_ids: list[UUID]
+    code_task_ids: list[UUID]
+    tasks: list[TaskStructureResponse]
+    code_tasks: list[CodeTaskStructureResponse]
     lectures: list[LectureStructureResponse]
+
     
     
+class TaskStructureResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    title: str
+    position: int
+
+
+class CodeTaskStructureResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    title: str
+    position: int
+    language: str

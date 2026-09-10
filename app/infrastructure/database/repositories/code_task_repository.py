@@ -1,4 +1,5 @@
 from uuid import UUID
+from sqlalchemy import select
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,9 +17,24 @@ class SqlAlchemyCodeTaskRepository(CodeTaskRepository):
         self.session.add(CodeTaskMapper.to_model(code_task))
         await self.session.flush()
 
+
     async def get_by_id(self, code_task_id: UUID) -> CodeTask | None:
         model = await self.session.get(CodeTaskModel, str(code_task_id))
         return None if model is None else CodeTaskMapper.to_domain(model)
+
+
+
+    async def get_by_ids(self, code_task_ids: list[UUID]) -> list[CodeTask]:
+        if not code_task_ids:
+            return []
+
+        stmt = select(CodeTaskModel).where(
+            CodeTaskModel.id.in_([str(code_task_id) for code_task_id in code_task_ids])
+        )
+        result = await self.session.execute(stmt)
+        models = result.scalars().all()
+        return [CodeTaskMapper.to_domain(model) for model in models]
+
 
     async def update(self, code_task: CodeTask) -> None:
         model = await self.session.get(CodeTaskModel, str(code_task.id))

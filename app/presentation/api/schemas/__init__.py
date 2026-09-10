@@ -6,6 +6,8 @@ from app.presentation.api.schemas.content import (
     LectureStructureResponse,
     ModuleStructureResponse,
     SectionStructureResponse,
+    TaskStructureResponse,
+    CodeTaskStructureResponse
 )
 
 from app.presentation.api.schemas.courses import CreateCourseRequest, UpdateCourseRequest
@@ -56,6 +58,35 @@ from app.presentation.api.schemas.question_attempts import (
 )
 
 
+from app.presentation.api.schemas.tasks import (
+    CreateTaskRequest,
+    TaskResponse,
+    UpdateTaskRequest,
+)
+from app.presentation.api.schemas.code_tasks import (
+    CodeTaskResponse,
+    CreateCodeTaskRequest,
+    UpdateCodeTaskRequest,
+)
+from app.presentation.api.schemas.test_cases import (
+    CreateTestCaseRequest,
+    TestCaseResponse,
+    UpdateTestCaseRequest,
+)
+
+
+
+from app.presentation.api.schemas.task_attempts import (
+    SubmitTaskAnswerRequest,
+    TaskAttemptResponse,
+)
+from app.presentation.api.schemas.code_submissions import (
+    CodeSubmissionResponse,
+    SubmitCodeSubmissionRequest,
+)
+
+
+
 
 
 
@@ -92,4 +123,21 @@ __all__ = [
     'StartQuestionAttemptResponse',
     'SubmitQuestionAnswerRequest',
     'QuestionAttemptResultResponse',
+    'CreateCodeTaskRequest',
+    'UpdateCodeTaskRequest',
+    'CodeTaskResponse',
+    'CreateTestCaseRequest',
+    'UpdateTestCaseRequest',
+    'TestCaseResponse',
+    'CreateTaskRequest',
+    'UpdateTaskRequest',
+    'TaskResponse',
+    'TaskStructureResponse',
+    'CodeTaskStructureResponse',
+    'SubmitTaskAnswerRequest',
+    'TaskAttemptResponse',
+    'SubmitCodeSubmissionRequest',
+    'CodeSubmissionResponse',
+    
+    
 ]

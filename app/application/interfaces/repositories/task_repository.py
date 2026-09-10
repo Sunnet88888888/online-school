@@ -12,6 +12,12 @@ class TaskRepository(ABC):
     @abstractmethod
     async def get_by_id(self, task_id: UUID) -> Task | None:
         raise NotImplementedError
+    
+    
+    @abstractmethod
+    async def get_by_ids(self, task_ids: list[UUID]) -> list[Task]:
+        raise NotImplementedError
+
 
     @abstractmethod
     async def update(self, task: Task) -> None:
