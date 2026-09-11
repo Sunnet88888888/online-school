@@ -83,9 +83,8 @@ from app.application.use_cases.test_cases.update_test_case import UpdateTestCase
 
 from app.application.use_cases.task_attempts.submit_task_answer import SubmitTaskAnswerUseCase
 from app.application.use_cases.code_submissions.submit_code_submission import SubmitCodeSubmissionUseCase
-from app.bootstrap.runtime_objects import submission_queue
 
-
+from app.bootstrap.build_submission_queue import build_submission_queue
 
 
 
@@ -387,7 +386,7 @@ def get_submit_task_answer_use_case() -> SubmitTaskAnswerUseCase:
 def get_submit_code_submission_use_case() -> SubmitCodeSubmissionUseCase:
     return SubmitCodeSubmissionUseCase(
         uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory),
-        submission_queue=submission_queue,
+        submission_queue=build_submission_queue(),
     )
     
     

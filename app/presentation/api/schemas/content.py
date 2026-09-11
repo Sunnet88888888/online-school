@@ -1,6 +1,8 @@
 from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
+from app.domain.entities.question import QuestionType
+
 
 class CourseBaseResponse(BaseModel):
 
@@ -45,11 +47,6 @@ class SectionBaseResponse(BaseModel):
     position: int
 
 
-class SectionStructureResponse(SectionBaseResponse):
-    question_ids: list[UUID]
-    task_ids: list[UUID]
-    lectures: list[LectureStructureResponse]
-    
 
 
 class ModuleBaseResponse(BaseModel):
