@@ -12,6 +12,7 @@ from app.domain.entities.test_case import TestCase
 
 class CodeTaskLanguage(StrEnum):
     PYTHON = 'python'
+    JAVA = 'java'
 
 
 @dataclass(slots=True)

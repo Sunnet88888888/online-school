@@ -20,6 +20,17 @@ from app.infrastructure.execution.docker_runner import DockerRunConfig, DockerRu
 
 from app.bootstrap.build_submission_queue import build_submission_queue
 
+from app.infrastructure.execution.java_submission_bundle_builder import (
+    JavaSubmissionBundleBuilder,
+)
+
+
+
+
+
+
+
+
 
 
 def build_code_submission_worker() -> CodeSubmissionWorker:
@@ -34,6 +45,10 @@ def build_code_submission_worker() -> CodeSubmissionWorker:
                 image='python:3.12-alpine',
                 bundle_builder=PythonSubmissionBundleBuilder(),
             ),
+            CodeTaskLanguage.JAVA: ExecutionProfile(
+                image='eclipse-temurin:21-jdk-jammy',
+                bundle_builder=JavaSubmissionBundleBuilder(),
+        ),
         }
     )
     execution_gateway = DockerCodeExecutionGateway(
