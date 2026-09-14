@@ -10,7 +10,7 @@ from app.infrastructure.queues.redis_submission_queue import RedisSubmissionQueu
 @lru_cache(maxsize=1)
 def get_redis_client() -> Redis:
     settings = get_settings()
-    return Redis.from_url(settings.redis_url)
+    return Redis.from_url(settings.redis_url, socket_timeout=None)
 
 
 @lru_cache(maxsize=1)

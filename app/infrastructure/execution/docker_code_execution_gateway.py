@@ -38,6 +38,12 @@ class DockerCodeExecutionGateway(CodeExecutionGateway):
         finally:
             temp_dir.cleanup()
 
+        
+        print("EXIT CODE:", run_result.exit_code)
+        print("STDOUT:", repr(run_result.stdout))
+        print("STDERR:", repr(run_result.stderr))
+        
+        
         return self._to_execution_result(
             submission_id=submission.id,
             run_result=run_result,

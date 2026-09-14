@@ -25,14 +25,6 @@ from app.infrastructure.execution.java_submission_bundle_builder import (
 )
 
 
-
-
-
-
-
-
-
-
 def build_code_submission_worker() -> CodeSubmissionWorker:
     queue = build_submission_queue()
     uow = SqlAlchemyUnitOfWork(session_factory=SessionFactory)
