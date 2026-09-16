@@ -38,3 +38,22 @@ class CodeSubmissionWorker:
                     'Code submission processing failed',
                     extra={'submission_id': str(submission_id)},
                 )
+                
+    async def run_once(self) -> None:
+        submission_id = await self.queue.dequeue()
+
+        try:
+            await self.process_use_case.execute(
+                ProcessCodeSubmissionCommand(submission_id=submission_id)
+            )
+        except RetryableExecutionError:
+            logger.warning(
+                'Code submission processing will be retried',
+                extra={'submission_id': str(submission_id)},
+            )
+            await self.queue.enqueue(submission_id)
+        except Exception:
+            logger.exception(
+                'Code submission processing failed',
+                extra={'submission_id': str(submission_id)},
+            )

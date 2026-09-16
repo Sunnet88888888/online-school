@@ -17,7 +17,7 @@ async def test_get_question_attempt_returns_question_state(
     assert payload['question_id'] == seeded_interactive_tree.question_id
     assert payload['can_submit'] is True
     assert payload['is_solved'] is False
-    assert len(payload['answer_options']) == 2
+    assert len(payload['answer_options']) == 4
 
 
 @pytest.mark.asyncio
