@@ -1,7 +1,5 @@
 from collections.abc import AsyncIterator
-
-from fastapi import Depends
-
+from fastapi import Depends, Security
 from app.application.use_cases.answer_options.delete_answer_option import (
     DeleteAnswerOptionUseCase,
 )
@@ -24,34 +22,21 @@ from app.application.use_cases.courses.get_course_structure import (
 )
 from app.application.use_cases.lectures.get_lecture import GetLectureUseCase
 from app.application.use_cases.lectures.delete_lecture import DeleteLectureUseCase
-
 from app.infrastructure.database import SessionFactory, SqlAlchemyUnitOfWork
-
 from app.application.use_cases.auth.login_user import LoginUserUseCase
-
-
 from app.application.interfaces.services.password_hasher import PasswordHasher
 from app.application.use_cases.auth.register_user import RegisterUserUseCase
 from app.infrastructure.security.password_hasher import PwdlibPasswordHasher
-
-
 from app.application.interfaces.services.token_service import TokenService
 from app.infrastructure.security.jwt_token_service import JwtTokenService
-
 from fastapi import Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-
-
 from app.application.interfaces.services.token_service import TokenService
 from app.domain.entities.user import User
-
 from app.infrastructure.database import SqlAlchemyUnitOfWork
 from app.infrastructure.security.jwt_token_service import InvalidTokenError
 from app.presentation.exceptions import AuthenticationError
-
 from app.presentation.exceptions import PermissionDeniedError
-
-
 from app.application.use_cases.answer_options.create_answer_option import (
     CreateAnswerOptionUseCase,
 )
@@ -72,8 +57,6 @@ from app.application.use_cases.question_attempts.start_question_attempt import (
 from app.application.use_cases.question_attempts.submit_question_answer import (
     SubmitQuestionAnswerUseCase,
 )
-
-
 from app.application.use_cases.tasks.create_task import CreateTaskUseCase
 from app.application.use_cases.tasks.update_task import UpdateTaskUseCase
 from app.application.use_cases.code_tasks.create_code_task import CreateCodeTaskUseCase
@@ -81,34 +64,47 @@ from app.application.use_cases.code_tasks.update_code_task import UpdateCodeTask
 from app.application.use_cases.test_cases.create_test_case import CreateTestCaseUseCase
 from app.application.use_cases.test_cases.update_test_case import UpdateTestCaseUseCase
 from app.application.use_cases.test_cases.delete_test_case import DeleteTestCaseUseCase
-
 from app.application.use_cases.task_attempts.submit_task_answer import (
     SubmitTaskAnswerUseCase,
 )
 from app.application.use_cases.code_submissions.submit_code_submission import (
     SubmitCodeSubmissionUseCase,
 )
-
 from app.bootstrap.build_submission_queue import build_submission_queue
-
-
 from app.application.use_cases.code_submissions.get_code_submission import (
     GetCodeSubmissionUseCase,
 )
 from app.application.use_cases.code_submissions.list_code_submissions import (
     ListCodeSubmissionsUseCase,
 )
-
-
 from app.application.use_cases.questions.get_question import GetQuestionUseCase
 from app.application.use_cases.tasks.get_task import GetTaskUseCase
 from app.application.use_cases.code_tasks.get_code_task import GetCodeTaskUseCase
-
-
 from app.application.use_cases.tasks.delete_task import DeleteTaskUseCase
-
-
 from app.application.use_cases.code_tasks.delete_code_task import DeleteCodeTaskUseCase
+from app.application.use_cases.courses.archive_course import ArchiveCourseUseCase
+from app.application.use_cases.courses.publish_course import PublishCourseUseCase
+
+from app.application.services.course_content_access_service import (
+    CourseContentAccessService,
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 http_bearer = HTTPBearer(auto_error=False)
 
@@ -125,13 +121,20 @@ def get_get_courses_use_case(
 
 
 def get_get_course_use_case(
-    uow: SqlAlchemyUnitOfWork = Depends(get_uow),
+        uow: SqlAlchemyUnitOfWork = Depends(get_uow),
 ) -> GetCourseUseCase:
-    return GetCourseUseCase(course_repository=uow.courses)
+    return GetCourseUseCase(
+        course_repository=uow.courses,
+        access_service=CourseContentAccessService(
+            course_repository=uow.courses,
+            module_repository=uow.modules,
+            section_repository=uow.sections,
+        ),
+    )
 
 
 def get_get_course_structure_use_case(
-    uow: SqlAlchemyUnitOfWork = Depends(get_uow),
+        uow: SqlAlchemyUnitOfWork = Depends(get_uow),
 ) -> GetCourseStructureUseCase:
     return GetCourseStructureUseCase(
         course_repository=uow.courses,
@@ -140,13 +143,24 @@ def get_get_course_structure_use_case(
         lecture_repository=uow.lectures,
         task_repository=uow.tasks,
         code_task_repository=uow.code_tasks,
+        access_service=CourseContentAccessService(
+            course_repository=uow.courses,
+            module_repository=uow.modules,
+            section_repository=uow.sections,
+        ),
     )
 
-
 def get_get_lecture_use_case(
-    uow: SqlAlchemyUnitOfWork = Depends(get_uow),
+        uow: SqlAlchemyUnitOfWork = Depends(get_uow),
 ) -> GetLectureUseCase:
-    return GetLectureUseCase(lecture_repository=uow.lectures)
+    return GetLectureUseCase(
+        lecture_repository=uow.lectures,
+        access_service=CourseContentAccessService(
+            course_repository=uow.courses,
+            module_repository=uow.modules,
+            section_repository=uow.sections,
+        ),
+    )
 
 
 def get_create_course_use_case() -> CreateCourseUseCase:
@@ -397,25 +411,42 @@ def get_list_code_submissions_use_case() -> ListCodeSubmissionsUseCase:
 
 
 def get_get_question_use_case(
-    uow: SqlAlchemyUnitOfWork = Depends(get_uow),
+        uow: SqlAlchemyUnitOfWork = Depends(get_uow),
 ) -> GetQuestionUseCase:
     return GetQuestionUseCase(
         question_repository=uow.questions,
         answer_option_repository=uow.answer_options,
+        access_service=CourseContentAccessService(
+            course_repository=uow.courses,
+            module_repository=uow.modules,
+            section_repository=uow.sections,
+        ),
     )
 
 
 def get_get_task_use_case(
-    uow: SqlAlchemyUnitOfWork = Depends(get_uow),
+        uow: SqlAlchemyUnitOfWork = Depends(get_uow),
 ) -> GetTaskUseCase:
-    return GetTaskUseCase(task_repository=uow.tasks)
-
+    return GetTaskUseCase(
+        task_repository=uow.tasks,
+        access_service=CourseContentAccessService(
+            course_repository=uow.courses,
+            module_repository=uow.modules,
+            section_repository=uow.sections,
+        ),
+    )
 
 def get_get_code_task_use_case(
-    uow: SqlAlchemyUnitOfWork = Depends(get_uow),
+        uow: SqlAlchemyUnitOfWork = Depends(get_uow),
 ) -> GetCodeTaskUseCase:
-    return GetCodeTaskUseCase(code_task_repository=uow.code_tasks)
-
+    return GetCodeTaskUseCase(
+        code_task_repository=uow.code_tasks,
+        access_service=CourseContentAccessService(
+            course_repository=uow.courses,
+            module_repository=uow.modules,
+            section_repository=uow.sections,
+        ),
+    )
 
 def get_delete_task_use_case() -> DeleteTaskUseCase:
     return DeleteTaskUseCase(uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory))
@@ -431,3 +462,39 @@ def get_delete_test_case_use_case() -> DeleteTestCaseUseCase:
     return DeleteTestCaseUseCase(
         uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
     )
+    
+    
+def get_publish_course_use_case() -> PublishCourseUseCase:
+    return PublishCourseUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+
+
+def get_archive_course_use_case() -> ArchiveCourseUseCase:
+    return ArchiveCourseUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+    
+    
+    
+async def get_current_user_or_none(
+        credentials: HTTPAuthorizationCredentials | None = Security(http_bearer),
+        uow: SqlAlchemyUnitOfWork = Depends(get_uow),
+        token_service: TokenService = Depends(get_token_service),
+) -> User | None:
+    if credentials is None:
+        return None
+
+    if credentials.scheme.lower() != 'bearer':
+        raise AuthenticationError('Authentication scheme must be Bearer.')
+
+    try:
+        user_id = token_service.get_user_id(credentials.credentials)
+    except InvalidTokenError as exc:
+        raise AuthenticationError(str(exc)) from exc
+
+    user = await uow.users.get_by_id(user_id)
+    if user is None:
+        raise AuthenticationError('User from token was not found.')
+
+    return user

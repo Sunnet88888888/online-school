@@ -16,6 +16,8 @@ class CourseModel(Base):
     
     author = relationship("UserModel", back_populates="courses")
     
+    status: Mapped[str] = mapped_column(String(32), default='draft', index=True)
+    
     modules = relationship(
         "ModuleModel",
         back_populates="course",

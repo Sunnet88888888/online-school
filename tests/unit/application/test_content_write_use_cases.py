@@ -41,12 +41,19 @@ from app.application.use_cases.sections.update_section import (
     UpdateSectionCommand,
     UpdateSectionUseCase,
 )
-from app.domain.entities.course import Course
 from app.domain.entities.lecture import Lecture
 from app.domain.entities.module import Module
 from app.domain.entities.section import Section
 
-
+from app.application.use_cases.courses.archive_course import (
+    ArchiveCourseCommand,
+    ArchiveCourseUseCase,
+)
+from app.application.use_cases.courses.publish_course import (
+    PublishCourseCommand,
+    PublishCourseUseCase,
+)
+from app.domain.entities.course import Course, CourseStatus
 
 
 
@@ -559,3 +566,45 @@ async def test_update_lecture_raises_not_found_when_lecture_is_missing() -> None
                 position=2,
             )
         )
+        
+        
+        
+        
+        
+@pytest.mark.asyncio
+async def test_publish_course_changes_status_to_published() -> None:
+    uow = FakeUnitOfWork()
+    actor = make_author()
+    course = make_owned_course(actor)
+    await uow.courses.add(course)
+
+    use_case = PublishCourseUseCase(uow=uow)
+    result = await use_case.execute(
+        PublishCourseCommand(
+            actor=actor,
+            course_id=course.id,
+        )
+    )
+
+    assert result.status is CourseStatus.PUBLISHED
+    assert uow.committed is True
+
+
+@pytest.mark.asyncio
+async def test_archive_course_changes_status_to_archived() -> None:
+    uow = FakeUnitOfWork()
+    actor = make_author()
+    course = make_owned_course(actor)
+    course.publish()
+    await uow.courses.add(course)
+
+    use_case = ArchiveCourseUseCase(uow=uow)
+    result = await use_case.execute(
+        ArchiveCourseCommand(
+            actor=actor,
+            course_id=course.id,
+        )
+    )
+
+    assert result.status is CourseStatus.ARCHIVED
+    assert uow.committed is True

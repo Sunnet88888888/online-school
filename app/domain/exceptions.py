@@ -101,3 +101,6 @@ class InvalidExecutionResultError(DomainError):
 
 class CodeTaskConfigurationError(DomainError):
     pass
+
+class InvalidCourseStatusTransitionError(DomainError):
+    pass

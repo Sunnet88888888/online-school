@@ -50,6 +50,17 @@ from app.application.use_cases.sections.update_section import (
     UpdateSectionCommand,
     UpdateSectionUseCase,
 )
+
+from app.application.use_cases.courses.archive_course import (
+    ArchiveCourseCommand,
+    ArchiveCourseUseCase,
+)
+from app.application.use_cases.courses.publish_course import (
+    PublishCourseCommand,
+    PublishCourseUseCase,
+)
+
+
 from app.domain.entities.user import User
 from app.presentation.api.dependencies import (
     get_create_course_use_case,
@@ -65,6 +76,8 @@ from app.presentation.api.dependencies import (
     get_update_lecture_use_case,
     get_update_module_use_case,
     get_update_section_use_case,
+    get_archive_course_use_case,   
+    get_publish_course_use_case,
 )
 from app.presentation.api.schemas import (
     CourseResponse,
@@ -468,3 +481,68 @@ async def delete_lecture(
         )
     )
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+
+
+
+
+# New
+@router.post(
+    '/courses/{course_id}/publish',
+    response_model=CourseResponse,
+    summary='Publish course',
+    description='Makes the course publicly visible for students.',
+    responses={
+        400: {
+            'description': 'Domain or application validation error.',
+            'model': ErrorResponse,
+        },
+        404: {
+            'description': 'Course was not found.',
+            'model': ErrorResponse,
+        },
+    },
+)
+async def publish_course(
+    course_id: UUID,
+    actor: User = Depends(get_current_author_or_admin),
+    use_case: PublishCourseUseCase = Depends(get_publish_course_use_case),
+) -> CourseResponse:
+    result = await use_case.execute(
+        PublishCourseCommand(
+            actor=actor,
+            course_id=course_id,
+        )
+    )
+    return CourseResponse.model_validate(result)
+
+
+@router.post(
+    '/courses/{course_id}/archive',
+    response_model=CourseResponse,
+    summary='Archive course',
+    description='Removes the course from public visibility without deleting it.',
+    responses={
+        400: {
+            'description': 'Domain or application validation error.',
+            'model': ErrorResponse,
+        },
+        404: {
+            'description': 'Course was not found.',
+            'model': ErrorResponse,
+        },
+    },
+)
+async def archive_course(
+    course_id: UUID,
+    actor: User = Depends(get_current_author_or_admin),
+    use_case: ArchiveCourseUseCase = Depends(get_archive_course_use_case),
+) -> CourseResponse:
+    result = await use_case.execute(
+        ArchiveCourseCommand(
+            actor=actor,
+            course_id=course_id,
+        )
+    )
+    return CourseResponse.model_validate(result)

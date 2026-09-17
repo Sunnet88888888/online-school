@@ -8,28 +8,24 @@ from app.application.dto.course_structure import (
     ModuleStructureDTO,
     SectionStructureDTO,
     TaskStructureDTO,
-
 )
-
+from app.application.exceptions import CourseNotFoundError
+from app.application.interfaces.repositories.code_task_repository import CodeTaskRepository
 from app.application.interfaces.repositories.course_repository import CourseRepository
 from app.application.interfaces.repositories.lecture_repository import LectureRepository
 from app.application.interfaces.repositories.module_repository import ModuleRepository
 from app.application.interfaces.repositories.section_repository import SectionRepository
-
-from app.application.exceptions import CourseNotFoundError
-
-
-
-from app.application.interfaces.repositories.code_task_repository import CodeTaskRepository
 from app.application.interfaces.repositories.task_repository import TaskRepository
-
-
-
+from app.application.services.course_content_access_service import (
+    CourseContentAccessService,
+)
+from app.domain.entities.user import User
 
 
 @dataclass(slots=True)
 class GetCourseStructureQuery:
     course_id: UUID
+    actor: User | None = None
 
 
 class GetCourseStructureUseCase:
@@ -41,6 +37,7 @@ class GetCourseStructureUseCase:
         lecture_repository: LectureRepository,
         task_repository: TaskRepository,
         code_task_repository: CodeTaskRepository,
+        access_service: CourseContentAccessService,
     ) -> None:
         self.course_repository = course_repository
         self.module_repository = module_repository
@@ -48,13 +45,19 @@ class GetCourseStructureUseCase:
         self.lecture_repository = lecture_repository
         self.task_repository = task_repository
         self.code_task_repository = code_task_repository
+        self.access_service = access_service
 
     async def execute(self, query: GetCourseStructureQuery) -> CourseStructureDTO:
-
         course = await self.course_repository.get_by_id(query.course_id)
-
         if course is None:
-            raise CourseNotFoundError("Course not found.")
+            raise CourseNotFoundError('Course not found.')
+
+        can_view = await self.access_service.can_view_course(
+            course_id=course.id,
+            actor=query.actor,
+        )
+        if not can_view:
+            raise CourseNotFoundError('Course not found.')
 
         modules = await self.module_repository.get_by_ids(course.module_ids)
         module_dtos: list[ModuleStructureDTO] = []
@@ -64,18 +67,7 @@ class GetCourseStructureUseCase:
             section_dtos: list[SectionStructureDTO] = []
 
             for section in sorted(sections, key=lambda item: item.position):
-                
                 lectures = await self.lecture_repository.get_by_ids(section.lecture_ids)
-                
-                lecture_dtos = [
-                    LectureStructureDTO(
-                        id=lecture.id,
-                        title=lecture.title,
-                        position=lecture.position,
-                    )
-                    for lecture in sorted(lectures, key=lambda item: item.position)
-                ]
-                
                 tasks = await self.task_repository.get_by_ids(section.task_ids)
                 code_tasks = await self.code_task_repository.get_by_ids(section.code_task_ids)
 
@@ -97,7 +89,16 @@ class GetCourseStructureUseCase:
                     )
                     for code_task in sorted(code_tasks, key=lambda item: item.position)
                 ]
-                
+
+                lecture_dtos = [
+                    LectureStructureDTO(
+                        id=lecture.id,
+                        title=lecture.title,
+                        position=lecture.position,
+                    )
+                    for lecture in sorted(lectures, key=lambda item: item.position)
+                ]
+
                 section_dtos.append(
                     SectionStructureDTO(
                         id=section.id,
@@ -109,8 +110,10 @@ class GetCourseStructureUseCase:
                         code_task_ids=list(section.code_task_ids),
                         tasks=task_dtos,
                         code_tasks=code_task_dtos,
-                        lectures=lecture_dtos, )
+                        lectures=lecture_dtos,
+                    )
                 )
+
             module_dtos.append(
                 ModuleStructureDTO(
                     id=module.id,
@@ -120,9 +123,11 @@ class GetCourseStructureUseCase:
                     sections=section_dtos,
                 )
             )
+
         return CourseStructureDTO(
             id=course.id,
             title=course.title,
             description=course.description,
+            status=course.status,
             modules=module_dtos,
         )

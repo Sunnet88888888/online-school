@@ -12,6 +12,10 @@ class CourseRepository(ABC):
     @abstractmethod
     async def list(self) -> "list[Course]":
         raise NotImplementedError
+    
+    @abstractmethod
+    async def list_published(self) -> 'list[Course]':  
+        raise NotImplementedError
 
     @abstractmethod
     async def add(self, course: Course) -> None:
