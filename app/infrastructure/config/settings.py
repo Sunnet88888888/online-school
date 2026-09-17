@@ -44,7 +44,7 @@ class Settings(BaseSettings):
         validation_alias='JWT_ACCESS_TOKEN_EXPIRE_MINUTES',
     )
     redis_url: str = Field(
-        default='redis://localhost:6379/0',
+        default='redis://localhost:6380/0', # you can change port, but I started it in 6380(default is 6379)
         validation_alias='REDIS_URL',
     )
     submission_queue_name: str = Field(
