@@ -40,7 +40,7 @@ class SqlAlchemyTestCaseRepository(TestCaseRepository):
     
     
     async def remove(self, test_case_id: UUID) -> None:
-        model = await self.session.get(TestCaseModel, test_case_id)
+        model = await self.session.get(TestCaseModel, str(test_case_id))
         if model is None:
             return
         

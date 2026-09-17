@@ -6,7 +6,7 @@ from app.application.interfaces.unit_of_work import UnitOfWork
 from app.application.exceptions import CodeTaskAlreadyUsedError, CodeTaskNotFoundError, TestCaseNotFoundError
 from app.application.services.course_access_service import CourseAccessService
 from app.domain.entities.user import User
-from app.domain.entities.code_task import CodeTask
+
 
 
 
@@ -37,6 +37,8 @@ class DeleteTestCaseUseCase:
             if code_task is None:
                 raise CodeTaskNotFoundError("Linked to this test case Code task not found.") 
             
+            code_task.test_case_ids = [test_case.id for test_case in await self.uow.test_cases.list_by_code_task_id(code_task.id)]
+                        
             
             await self.course_access_service.ensure_can_manage_section(
                 actor=command.actor, section_id=code_task.section_id
