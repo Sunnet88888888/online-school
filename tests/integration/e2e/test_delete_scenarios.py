@@ -315,6 +315,79 @@ async def test_author_cannot_delete_used_code_task_and_history_is_preserved(
 
 
 @pytest.mark.asyncio
+async def test_author_cannot_delete_only_test_case_before_any_submission(
+    client,
+    author_auth_headers,
+    session_factory,
+):
+    course_response = await client.post(
+        '/api/admin/courses',
+        headers=author_auth_headers,
+        json={'title': 'Single test case course', 'description': 'Course with a single test case.'},
+    )
+    course_id = course_response.json()['id']
+
+    module_response = await client.post(
+        f'/api/admin/courses/{course_id}/modules',
+        headers=author_auth_headers,
+        json={'title': 'Python', 'description': 'Practice', 'position': 1},
+    )
+    module_id = module_response.json()['id']
+
+    section_response = await client.post(
+        f'/api/admin/modules/{module_id}/sections',
+        headers=author_auth_headers,
+        json={'title': 'Last case', 'description': 'Intro', 'position': 1},
+    )
+    section_id = section_response.json()['id']
+
+    code_task_response = await client.post(
+        f'/api/admin/sections/{section_id}/code-tasks',
+        headers=author_auth_headers,
+        json={
+            'title': 'Unary increment',
+            'statement': 'Read x and print x + 1.',
+            'position': 1,
+            'language': 'python',
+            'starter_code': 'x = int(input())',
+            'max_attempts': 2,
+            'reward_points': 5,
+            'time_limit_seconds': 20,
+            'memory_limit_mb': 128,
+        },
+    )
+    code_task_id = code_task_response.json()['id']
+
+    test_case_response = await client.post(
+        f'/api/admin/code-tasks/{code_task_id}/test-cases',
+        headers=author_auth_headers,
+        json={
+            'position': 1,
+            'input_data': '7',
+            'expected_output': '8',
+            'is_hidden': False,
+            'explanation': 'single case',
+        },
+    )
+    test_case_id = test_case_response.json()['id']
+
+    delete_response = await client.delete(
+        f'/api/admin/test-cases/{test_case_id}',
+        headers=author_auth_headers,
+    )
+
+    assert delete_response.status_code == 400
+
+    async with session_factory() as session:
+        remaining_cases = (await session.execute(
+            select(TestCaseModel).where(TestCaseModel.code_task_id == code_task_id)
+        )).scalars().all()
+
+    assert len(remaining_cases) == 1
+    assert remaining_cases[0].id == test_case_id
+
+
+@pytest.mark.asyncio
 async def test_author_can_delete_one_test_case_before_submission_and_delete_is_blocked_after_submission(
     client,
     author_auth_headers,
