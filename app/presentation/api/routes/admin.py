@@ -51,6 +51,22 @@ from app.application.use_cases.sections.update_section import (
     UpdateSectionUseCase,
 )
 
+
+
+
+
+from app.application.use_cases.courses.publish_course import (
+    PublishCourseCommand,
+    PublishCourseUseCase,
+)
+
+from app.application.use_cases.courses.get_course_publication_readiness import \
+    GetCoursePublicationReadinessUseCase, GetCoursePublicationReadinessQuery
+
+
+
+
+
 from app.application.use_cases.courses.archive_course import (
     ArchiveCourseCommand,
     ArchiveCourseUseCase,
@@ -78,6 +94,7 @@ from app.presentation.api.dependencies import (
     get_update_section_use_case,
     get_archive_course_use_case,   
     get_publish_course_use_case,
+    get_get_course_publication_readiness_use_case,
 )
 from app.presentation.api.schemas import (
     CourseResponse,
@@ -93,8 +110,23 @@ from app.presentation.api.schemas import (
     UpdateLectureRequest,
     UpdateModuleRequest,
     UpdateSectionRequest,
+    CoursePublicationErrorResponse,
+    CoursePublicationReadinessResponse,
 )
+
 from app.presentation.api.schemas.content import CourseBaseResponse
+
+
+
+
+
+
+
+
+
+
+
+
 
 router = APIRouter(
     prefix="/admin",
@@ -493,11 +525,11 @@ async def delete_lecture(
     '/courses/{course_id}/publish',
     response_model=CourseResponse,
     summary='Publish course',
-    description='Makes the course publicly visible for students.',
+    description='Publishes the course if it is complete and ready for students.',
     responses={
         400: {
-            'description': 'Domain or application validation error.',
-            'model': ErrorResponse,
+            'description': 'Course is not ready for publication.',
+            'model': CoursePublicationErrorResponse,
         },
         404: {
             'description': 'Course was not found.',
@@ -509,14 +541,14 @@ async def publish_course(
     course_id: UUID,
     actor: User = Depends(get_current_author_or_admin),
     use_case: PublishCourseUseCase = Depends(get_publish_course_use_case),
-) -> CourseBaseResponse:
+) -> CourseResponse:
     result = await use_case.execute(
         PublishCourseCommand(
             actor=actor,
             course_id=course_id,
         )
     )
-    return CourseBaseResponse.model_validate(result)
+    return CourseResponse.model_validate(result)
 
 
 @router.post(
@@ -547,3 +579,35 @@ async def archive_course(
         )
     )
     return CourseResponse.model_validate(result)
+
+
+
+
+
+
+@router.get(
+    '/courses/{course_id}/publication-readiness',
+    response_model=CoursePublicationReadinessResponse,
+    summary='Get course publication readiness',
+    description='Returns diagnostics that explain whether the course can be published.',
+    responses={
+        404: {
+            'description': 'Course was not found.',
+            'model': ErrorResponse,
+        },
+    },
+)
+async def get_course_publication_readiness(
+    course_id: UUID,
+    actor: User = Depends(get_current_author_or_admin),
+    use_case: GetCoursePublicationReadinessUseCase = Depends(
+        get_get_course_publication_readiness_use_case
+    ),
+) -> CoursePublicationReadinessResponse:
+    result = await use_case.execute(
+        GetCoursePublicationReadinessQuery(
+            actor=actor,
+            course_id=course_id,
+        )
+    )
+    return CoursePublicationReadinessResponse.model_validate(result)

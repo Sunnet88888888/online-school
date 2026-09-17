@@ -1,3 +1,7 @@
+from app.application.dto.course_publication import CoursePublicationReadinessDTO
+
+
+
 class ApplicationError(Exception):
     """Base exception for application-layer errors"""
 
@@ -65,3 +69,9 @@ class TestCaseNotFoundError(ApplicationError):
 
 class RetryableExecutionError(ApplicationError):
     pass
+
+
+class CoursePublicationNotReadyError(ApplicationError):
+    def __init__(self, readiness: CoursePublicationReadinessDTO) -> None:
+        super().__init__('Course is not ready for publication.')
+        self.readiness = readiness

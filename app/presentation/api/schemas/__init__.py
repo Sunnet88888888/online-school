@@ -89,7 +89,11 @@ from app.presentation.api.schemas.code_submissions import (
     SubmitCodeSubmissionRequest,
 )
 
-
+from app.presentation.api.schemas.course_publication import (
+    CoursePublicationErrorResponse,
+    CoursePublicationIssueResponse,
+    CoursePublicationReadinessResponse,
+)
 
 
 
@@ -146,6 +150,9 @@ __all__ = [
     'QuestionDetailsResponse',  
     'TaskDetailsResponse',
     'CodeTaskDetailsResponse',
+    'CoursePublicationIssueResponse',
+    'CoursePublicationReadinessResponse',
+    'CoursePublicationErrorResponse',
     
     
     

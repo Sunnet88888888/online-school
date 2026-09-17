@@ -90,7 +90,9 @@ from app.application.services.course_content_access_service import (
 )
 
 
-
+from app.application.use_cases.courses.get_course_publication_readiness import (
+    GetCoursePublicationReadinessUseCase,
+)
 
 
 
@@ -498,3 +500,11 @@ async def get_current_user_or_none(
         raise AuthenticationError('User from token was not found.')
 
     return user
+
+
+
+
+def get_get_course_publication_readiness_use_case() -> GetCoursePublicationReadinessUseCase:
+    return GetCoursePublicationReadinessUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
