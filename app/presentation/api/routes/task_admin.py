@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Response, status
 
 from app.application.use_cases.code_tasks.create_code_task import (
     CreateCodeTaskCommand,
@@ -18,6 +18,17 @@ from app.application.use_cases.tasks.update_task import (
     UpdateTaskCommand,
     UpdateTaskUseCase,
 )
+
+from app.application.use_cases.tasks.delete_task import (
+    DeleteTaskCommand,
+    DeleteTaskUseCase,
+)
+
+from app.application.use_cases.code_tasks.delete_code_task import (
+    DeleteCodeTaskUseCase,
+    DeleteCodeTaskCommand,
+)
+
 from app.application.use_cases.test_cases.create_test_case import (
     CreateTestCaseCommand,
     CreateTestCaseUseCase,
@@ -26,15 +37,27 @@ from app.application.use_cases.test_cases.update_test_case import (
     UpdateTestCaseCommand,
     UpdateTestCaseUseCase,
 )
+
+
+from app.application.use_cases.test_cases.delete_test_case import (
+    DeleteTestCaseCommand,
+    DeleteTestCaseUseCase,
+)
+
+
+
 from app.domain.entities.user import User
 from app.presentation.api.dependencies import (
     get_create_code_task_use_case,
     get_create_task_use_case,
     get_create_test_case_use_case,
     get_current_author_or_admin,
+    get_delete_code_task_use_case,
+    get_delete_task_use_case,
     get_update_code_task_use_case,
     get_update_task_use_case,
     get_update_test_case_use_case,
+    get_delete_test_case_use_case,
 )
 from app.presentation.api.schemas import (
     CodeTaskResponse,
@@ -124,6 +147,37 @@ async def update_task(
     return TaskResponse.model_validate(result)
 
 
+
+@router.delete(
+    '/tasks/{task_id}',
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete task by ID",
+    description="Deletes a task by id, deletes if task wasn't used and doesn't have task attempts.",
+    responses={
+        404: {
+            "description": "Task was not found.",
+            "model": ErrorResponse,
+        },
+    },
+)
+async def delete_task(
+    task_id: UUID,
+    actor: User = Depends(get_current_author_or_admin),
+    use_case: DeleteTaskUseCase = Depends(get_delete_task_use_case),
+) -> Response:
+    await use_case.execute(
+        DeleteTaskCommand(
+        actor=actor,
+        task_id=task_id,
+        )
+    )
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+
+
+
+
 @router.post(
     '/sections/{section_id}/code-tasks',
     response_model=CodeTaskResponse,
@@ -183,6 +237,36 @@ async def update_code_task(
     return CodeTaskResponse.model_validate(result)
 
 
+
+
+
+@router.delete(
+    '/code-tasks/{code_task_id}',
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete code task by ID",
+    description="Deletes a code task by id, deletes if code task wasn't used and doesn't have code submissions.",
+    responses={
+        404: {
+            "description": "Code task was not found.",
+            "model": ErrorResponse,
+        },
+    },
+)
+async def delete_code_task(
+    code_task_id: UUID,
+    actor: User = Depends(get_current_author_or_admin),
+    use_case: DeleteCodeTaskUseCase = Depends(get_delete_code_task_use_case),
+) -> Response:
+    await use_case.execute(
+        DeleteCodeTaskCommand(
+        actor=actor,
+        code_task_id=code_task_id,
+        )
+    )
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+
 @router.post(
     '/code-tasks/{code_task_id}/test-cases',
     response_model=TestCaseResponse,
@@ -232,3 +316,39 @@ async def update_test_case(
         )
     )
     return TestCaseResponse.model_validate(result)
+
+
+
+@router.delete(
+    '/test-cases/{test_case_id}',
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete test case by ID",
+    description="Deletes a test case by id, deletes if code task has correct configuration after deleting.",
+    responses={
+        404: {
+            "description": "Test case was not found.",
+            "model": ErrorResponse,
+        },
+    },
+    
+)
+
+async def delete_test_case(
+    test_case_id: UUID,
+    actor: User = Depends(get_current_author_or_admin),
+    use_case: DeleteTestCaseUseCase = Depends(get_delete_test_case_use_case),
+) -> Response:
+    await use_case.execute(
+        DeleteTestCaseCommand(
+        actor=actor,
+        test_case_id=test_case_id,
+        )
+    )
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+
+
+
+
+

@@ -8,6 +8,27 @@ class LectureStructureDTO:
     position: int
     
     
+    
+@dataclass(slots=True)
+class TaskStructureDTO:
+    id: UUID
+    title: str
+    position: int
+
+
+@dataclass(slots=True)
+class CodeTaskStructureDTO:
+    id: UUID
+    title: str
+    position: int
+    language: str
+   
+    
+    
+    
+    
+    
+    
 @dataclass(slots=True)
 class SectionStructureDTO:
     id: UUID
@@ -38,16 +59,3 @@ class CourseStructureDTO:
     modules: list[ModuleStructureDTO] = field(default_factory=list)
     
 
-@dataclass(slots=True)
-class TaskStructureDTO:
-    id: UUID
-    title: str
-    position: int
-
-
-@dataclass(slots=True)
-class CodeTaskStructureDTO:
-    id: UUID
-    title: str
-    position: int
-    language: str

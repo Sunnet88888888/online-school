@@ -4,6 +4,7 @@ from uuid import UUID, uuid4
 
 from app.domain.entities.code_submission import CodeSubmission
 from app.domain.exceptions import (
+    CodeTaskConfigurationError,
     InvalidCodeTaskError, 
     CodeTaskAlreadySolvedError,
     CodeSubmissionLimitExceededError,
@@ -193,3 +194,7 @@ class CodeTask:
             raise InvalidCodeTaskError(
                 'CodeTask test cases cannot be changed after submissions.'
             )
+            
+    def ensure_test_cases_configuration(self):
+        if not self.has_test_cases():
+                raise CodeTaskConfigurationError("CodeTask must contain at least one test case.")

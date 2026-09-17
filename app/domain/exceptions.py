@@ -98,3 +98,6 @@ class InvalidTestCaseError(DomainError):
 
 class InvalidExecutionResultError(DomainError):
     pass
+
+class CodeTaskConfigurationError(DomainError):
+    pass

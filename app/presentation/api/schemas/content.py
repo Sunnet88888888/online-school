@@ -58,12 +58,29 @@ class ModuleBaseResponse(BaseModel):
     position: int
 
 
-class ModuleStructureResponse(ModuleBaseResponse):
-    sections: list[SectionStructureResponse]
+class TaskStructureResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    title: str
+    position: int
+    
 
 
-class CourseStructureResponse(CourseBaseResponse):
-    modules: list[ModuleStructureResponse]
+
+
+
+class CodeTaskStructureResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    title: str
+    position: int
+    language: str
+
+
+
+
 
 
 
@@ -75,23 +92,23 @@ class SectionStructureResponse(SectionBaseResponse):
     code_tasks: list[CodeTaskStructureResponse]
     lectures: list[LectureStructureResponse]
 
+class ModuleStructureResponse(ModuleBaseResponse):
+    sections: list[SectionStructureResponse]
+
+
+class CourseStructureResponse(CourseBaseResponse):
+    modules: list[ModuleStructureResponse]
+
+
+
+
+
     
     
-class TaskStructureResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: UUID
-    title: str
-    position: int
 
 
-class CodeTaskStructureResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
 
-    id: UUID
-    title: str
-    position: int
-    language: str
+
     
 class AnswerOptionDetailsResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
