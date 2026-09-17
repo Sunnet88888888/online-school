@@ -23,7 +23,7 @@ async def test_publish_course_endpoint_changes_status(
     )
 
     assert publish_response.status_code == 200
-    assert publish_response.json()['status'] == 'published'
+    assert publish_response.json().get('status') == 'published'
 
 
 @pytest.mark.asyncio
@@ -52,7 +52,7 @@ async def test_archive_course_endpoint_changes_status(
     )
 
     assert archive_response.status_code == 200
-    assert archive_response.json()['status'] == 'archived'
+    assert archive_response.json().get('status') == 'archived'
 
 
 @pytest.mark.asyncio
@@ -90,7 +90,7 @@ async def test_public_courses_list_returns_only_published_courses(
     payload = response.json()
     assert len(payload) == 1
     assert payload[0]['title'] == 'Published course'
-    assert payload[0]['status'] == 'published'
+    assert payload[0].get('status') == 'published'
 
 
 @pytest.mark.asyncio
@@ -175,4 +175,4 @@ async def test_published_course_can_still_be_updated(
 
     assert update_response.status_code == 200
     assert update_response.json()['title'] == 'Updated published course'
-    assert update_response.json()['status'] == 'published'
+    assert update_response.json().get('status') == 'published'

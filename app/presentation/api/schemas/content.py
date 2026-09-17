@@ -5,12 +5,12 @@ from app.domain.entities.question import QuestionType
 
 
 class CourseBaseResponse(BaseModel):
-
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
     title: str
     description: str
+    status: CourseStatus
 
 
 class CourseListItemResponse(CourseBaseResponse):
@@ -19,16 +19,6 @@ class CourseListItemResponse(CourseBaseResponse):
 
 class CourseResponse(CourseBaseResponse):
     pass
-
-
-
-class CourseBaseResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: UUID
-    title: str
-    description: str
-    status: CourseStatus
 
 
 

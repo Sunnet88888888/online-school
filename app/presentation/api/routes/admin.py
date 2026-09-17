@@ -94,6 +94,7 @@ from app.presentation.api.schemas import (
     UpdateModuleRequest,
     UpdateSectionRequest,
 )
+from app.presentation.api.schemas.content import CourseBaseResponse
 
 router = APIRouter(
     prefix="/admin",
@@ -508,14 +509,14 @@ async def publish_course(
     course_id: UUID,
     actor: User = Depends(get_current_author_or_admin),
     use_case: PublishCourseUseCase = Depends(get_publish_course_use_case),
-) -> CourseResponse:
+) -> CourseBaseResponse:
     result = await use_case.execute(
         PublishCourseCommand(
             actor=actor,
             course_id=course_id,
         )
     )
-    return CourseResponse.model_validate(result)
+    return CourseBaseResponse.model_validate(result)
 
 
 @router.post(

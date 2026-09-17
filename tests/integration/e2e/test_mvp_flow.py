@@ -16,12 +16,6 @@ async def test_mvp_flow_from_login_to_public_read(client, seeded_admin_user):
     headers = {'Authorization': f'Bearer {access_token}'}
     
     
-    await client.post(
-    f'/api/admin/courses/{course_id}/publish',
-    headers=headers,
-)
-    
-    
     # create course
     course_response = await client.post(
         '/api/admin/courses',
@@ -33,6 +27,11 @@ async def test_mvp_flow_from_login_to_public_read(client, seeded_admin_user):
     )
     assert course_response.status_code == 201
     course_id = course_response.json()['id']
+
+    await client.post(
+        f'/api/admin/courses/{course_id}/publish',
+        headers=headers,
+    )
     
     #create module
     module_response = await client.post(
