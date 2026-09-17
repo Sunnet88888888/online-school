@@ -4,6 +4,7 @@ import pytest
 
 from app.application.exceptions import (
     CourseNotFoundError,
+    CoursePublicationNotReadyError,
     LectureNotFoundError,
     ModuleNotFoundError,
     SectionNotFoundError,
@@ -83,7 +84,38 @@ def make_owned_course(author: User) -> Course:
 
 
 
+class EmptyCollectionRepository:
+    def __init__(self) -> None:
+        self.items = {}
 
+    async def get_by_id(self, entity_id):
+        return self.items.get(entity_id)
+
+    async def get_by_ids(self, entity_ids):
+        return [self.items[entity_id] for entity_id in entity_ids if entity_id in self.items]
+
+    async def add(self, entity) -> None:
+        self.items[entity.id] = entity
+
+    async def update(self, entity) -> None:
+        self.items[entity.id] = entity
+
+    async def remove(self, entity_id) -> None:
+        self.items.pop(entity_id, None)
+
+
+class EmptyTestCaseRepository:
+    def __init__(self) -> None:
+        self.items = {}
+
+    async def list_by_code_task_id(self, code_task_id):
+        return [
+            item for item in self.items.values()
+            if item.code_task_id == code_task_id
+        ]
+
+    async def add(self, entity) -> None:
+        self.items[entity.id] = entity
 
 
 
@@ -161,6 +193,10 @@ class FakeUnitOfWork(UnitOfWork):
         self.modules = FakeModuleRepository()
         self.sections = FakeSectionRepository()
         self.lectures = FakeLectureRepository()
+        self.questions = EmptyCollectionRepository()
+        self.answer_options = EmptyCollectionRepository()
+        self.code_tasks = EmptyCollectionRepository()
+        self.test_cases = EmptyTestCaseRepository()
         self.users = None
         self.committed = False
         self.rolled_back = False
@@ -572,22 +608,23 @@ async def test_update_lecture_raises_not_found_when_lecture_is_missing() -> None
         
         
 @pytest.mark.asyncio
-async def test_publish_course_changes_status_to_published() -> None:
+async def test_publish_course_raises_error_for_not_ready_course() -> None:
     uow = FakeUnitOfWork()
     actor = make_author()
     course = make_owned_course(actor)
     await uow.courses.add(course)
 
     use_case = PublishCourseUseCase(uow=uow)
-    result = await use_case.execute(
-        PublishCourseCommand(
-            actor=actor,
-            course_id=course.id,
-        )
-    )
 
-    assert result.status is CourseStatus.PUBLISHED
-    assert uow.committed is True
+    with pytest.raises(CoursePublicationNotReadyError):
+        await use_case.execute(
+            PublishCourseCommand(
+                actor=actor,
+                course_id=course.id,
+            )
+        )
+
+    assert uow.committed is False
 
 
 @pytest.mark.asyncio
@@ -607,4 +644,55 @@ async def test_archive_course_changes_status_to_archived() -> None:
     )
 
     assert result.status is CourseStatus.ARCHIVED
+    assert uow.committed is True
+    
+    
+    
+    
+@pytest.mark.asyncio
+async def test_publish_course_changes_status_to_published_for_ready_course() -> None:
+    uow = FakeUnitOfWork()
+    actor = make_author()
+    course = make_owned_course(actor)
+
+    module = Module(
+        id=uuid4(),
+        course_id=course.id,
+        title='Module 1',
+        description='Description',
+        position=1,
+    )
+    section = Section(
+        id=uuid4(),
+        module_id=module.id,
+        title='Section 1',
+        description='Description',
+        position=1,
+    )
+    lecture = Lecture(
+        id=uuid4(),
+        section_id=section.id,
+        title='Lecture 1',
+        content='Lecture content',
+        position=1,
+    )
+
+    course.add_module(module.id)
+    module.add_section(section.id)
+    section.add_lecture(lecture.id)
+
+    await uow.courses.add(course)
+    await uow.modules.add(module)
+    await uow.sections.add(section)
+    await uow.lectures.add(lecture)
+
+    use_case = PublishCourseUseCase(uow=uow)
+    result = await use_case.execute(
+        PublishCourseCommand(
+            actor=actor,
+            course_id=course.id,
+        )
+    )
+
+    assert result.status is CourseStatus.PUBLISHED
     assert uow.committed is True

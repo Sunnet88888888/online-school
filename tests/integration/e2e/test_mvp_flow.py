@@ -28,11 +28,6 @@ async def test_mvp_flow_from_login_to_public_read(client, seeded_admin_user):
     assert course_response.status_code == 201
     course_id = course_response.json()['id']
 
-    await client.post(
-        f'/api/admin/courses/{course_id}/publish',
-        headers=headers,
-    )
-    
     #create module
     module_response = await client.post(
         f'/api/admin/courses/{course_id}/modules',
@@ -71,6 +66,12 @@ async def test_mvp_flow_from_login_to_public_read(client, seeded_admin_user):
     )
     assert lecture_response.status_code == 201
     lecture_id = lecture_response.json()['id']
+
+    publish_response = await client.post(
+        f'/api/admin/courses/{course_id}/publish',
+        headers=headers,
+    )
+    assert publish_response.status_code == 200
     
     # verify that the course structure is correct and the lecture content is accessible
     courses_response = await client.get('/api/courses')
