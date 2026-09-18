@@ -2,7 +2,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
-from app.domain.entities.course import CourseStatus
+from app.domain.entities.course import CourseDifficulty, CourseStatus
 
 
 class CourseCatalogCountersResponse(BaseModel):
@@ -21,7 +21,10 @@ class CourseCatalogItemResponse(BaseModel):
 
     id: UUID
     title: str
-    description: str
+    short_description: str
+    cover_image_url: str | None
+    difficulty: CourseDifficulty
+    tag_names: list[str]
     status: CourseStatus
     counters: CourseCatalogCountersResponse
 
@@ -50,6 +53,10 @@ class CourseCatalogCardResponse(BaseModel):
     id: UUID
     title: str
     description: str
+    short_description: str
+    cover_image_url: str | None
+    difficulty: CourseDifficulty
+    tag_names: list[str]
     status: CourseStatus
     counters: CourseCatalogCountersResponse
     modules: list[CourseCatalogModulePreviewResponse]

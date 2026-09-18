@@ -158,15 +158,19 @@ router = APIRouter(
     },
 )
 async def create_course(
-    request: CreateCourseRequest,
-    actor: User = Depends(get_current_author_or_admin),
-    use_case: CreateCourseUseCase = Depends(get_create_course_use_case),
+        request: CreateCourseRequest,
+        actor: User = Depends(get_current_author_or_admin),
+        use_case: CreateCourseUseCase = Depends(get_create_course_use_case),
 ) -> CourseResponse:
     result = await use_case.execute(
         CreateCourseCommand(
             actor=actor,
             title=request.title,
             description=request.description,
+            short_description=request.short_description,
+            cover_image_url=str(request.cover_image_url) if request.cover_image_url is not None else None,
+            difficulty=request.difficulty,
+            tag_names=list(request.tag_names),
         )
     )
     return CourseResponse.model_validate(result)
@@ -189,10 +193,10 @@ async def create_course(
     },
 )
 async def update_course(
-    course_id: UUID,
-    request: UpdateCourseRequest,
-    actor: User = Depends(get_current_author_or_admin),
-    use_case: UpdateCourseUseCase = Depends(get_update_course_use_case),
+        course_id: UUID,
+        request: UpdateCourseRequest,
+        actor: User = Depends(get_current_author_or_admin),
+        use_case: UpdateCourseUseCase = Depends(get_update_course_use_case),
 ) -> CourseResponse:
     result = await use_case.execute(
         UpdateCourseCommand(
@@ -200,6 +204,10 @@ async def update_course(
             course_id=course_id,
             title=request.title,
             description=request.description,
+            short_description=request.short_description,
+            cover_image_url=str(request.cover_image_url) if request.cover_image_url is not None else None,
+            difficulty=request.difficulty,
+            tag_names=list(request.tag_names),
         )
     )
     return CourseResponse.model_validate(result)

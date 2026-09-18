@@ -125,9 +125,13 @@ class GetCourseStructureUseCase:
             )
 
         return CourseStructureDTO(
-            id=course.id,
-            title=course.title,
-            description=course.description,
-            status=course.status,
-            modules=module_dtos,
-        )
+                id=course.id,
+                title=course.title,
+                description=course.description,
+                status=course.status,
+                short_description=course.short_description,
+                cover_image_url=course.cover_image_url,
+                difficulty=course.difficulty,
+                tag_names=list(course.tag_names),
+                modules=module_dtos,
+)
