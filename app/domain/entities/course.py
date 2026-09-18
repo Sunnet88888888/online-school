@@ -123,3 +123,5 @@ class Course:
     def remove_module(self, module_id: UUID) -> None:
         if module_id in self.module_ids:
             self.module_ids.remove(module_id)
+        else: 
+            raise InvalidCourseError("Module not in this course.")
