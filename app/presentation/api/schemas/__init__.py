@@ -98,6 +98,25 @@ from app.presentation.api.schemas.course_publication import (
 
 
 
+from app.presentation.api.schemas.catalog import (
+    CourseCatalogCardResponse,
+    CourseCatalogCountersResponse,
+    CourseCatalogItemResponse,
+    CourseCatalogModulePreviewResponse,
+    CourseCatalogSectionPreviewResponse,
+)
+
+
+
+
+
+
+
+
+
+
+
+
 __all__ = [
     "CourseListItemResponse",
     "CourseResponse",
@@ -153,6 +172,11 @@ __all__ = [
     'CoursePublicationIssueResponse',
     'CoursePublicationReadinessResponse',
     'CoursePublicationErrorResponse',
+    'CourseCatalogCountersResponse',
+    'CourseCatalogItemResponse',
+    'CourseCatalogSectionPreviewResponse',
+    'CourseCatalogModulePreviewResponse',
+    'CourseCatalogCardResponse',
     
     
     

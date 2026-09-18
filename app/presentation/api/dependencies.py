@@ -94,7 +94,9 @@ from app.application.use_cases.courses.get_course_publication_readiness import (
     GetCoursePublicationReadinessUseCase,
 )
 
-
+from app.application.services.course_catalog_read_service import (
+    CourseCatalogReadService,
+)
 
 
 
@@ -116,10 +118,24 @@ async def get_uow() -> AsyncIterator[SqlAlchemyUnitOfWork]:
         yield uow
 
 
+
+
 def get_get_courses_use_case(
-    uow: SqlAlchemyUnitOfWork = Depends(get_uow),
+        uow: SqlAlchemyUnitOfWork = Depends(get_uow),
 ) -> GetCoursesUseCase:
-    return GetCoursesUseCase(course_repository=uow.courses)
+    return GetCoursesUseCase(
+        course_repository=uow.courses,
+        catalog_read_service=CourseCatalogReadService(
+            module_repository=uow.modules,
+            section_repository=uow.sections,
+            lecture_repository=uow.lectures,
+            question_repository=uow.questions,
+            task_repository=uow.tasks,
+            code_task_repository=uow.code_tasks,
+        ),
+    )
+
+
 
 
 def get_get_course_use_case(
@@ -132,8 +148,19 @@ def get_get_course_use_case(
             module_repository=uow.modules,
             section_repository=uow.sections,
         ),
+        catalog_read_service=CourseCatalogReadService(
+            module_repository=uow.modules,
+            section_repository=uow.sections,
+            lecture_repository=uow.lectures,
+            question_repository=uow.questions,
+            task_repository=uow.tasks,
+            code_task_repository=uow.code_tasks,
+        ),
     )
-
+    
+    
+    
+    
 
 def get_get_course_structure_use_case(
         uow: SqlAlchemyUnitOfWork = Depends(get_uow),
