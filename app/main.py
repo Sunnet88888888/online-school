@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 from app.infrastructure.config import get_settings
 from app.presentation.api.handlers import register_exception_handlers
@@ -35,6 +36,13 @@ def create_app() -> FastAPI:
             },
         ],
     )
+    
+    app.mount(
+        "/media",
+        StaticFiles(directory="uploaded_media"),
+        name="media",
+    )
+    
     register_exception_handlers(app)
     app.include_router(api_router)
 

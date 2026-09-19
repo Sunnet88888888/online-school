@@ -10,3 +10,5 @@ class PermissionDeniedError(PresentationError):
     pass
 
 
+class FileTooLargeError(PresentationError):
+    pass

@@ -6,6 +6,7 @@ from app.application.use_cases.answer_options.delete_answer_option import (
 from app.application.use_cases.courses.create_course import CreateCourseUseCase
 from app.application.use_cases.courses.delete_course import DeleteCourseUseCase
 from app.application.use_cases.courses.update_course import UpdateCourseUseCase
+from app.application.use_cases.courses.upload_course_cover_image import UploadCourseCoverImageUseCase
 from app.application.use_cases.lectures.create_lecture import CreateLectureUseCase
 from app.application.use_cases.lectures.update_lecture import UpdateLectureUseCase
 from app.application.use_cases.modules.create_module import CreateModuleUseCase
@@ -98,10 +99,14 @@ from app.application.services.course_catalog_read_service import (
     CourseCatalogReadService,
 )
 
+from app.application.protocols.file_storage import FileStorage
+from app.infrastructure.storage.local_file_storage import LocalFileStorage
 
 
+from app.application.protocols.image_processor import ImageProcessor
+from app.infrastructure.image.pillow_image_processor import PillowImageProcessor
 
-
+from app.application.services.course_image_validator import ImageValidationService
 
 
 
@@ -534,4 +539,41 @@ async def get_current_user_or_none(
 def get_get_course_publication_readiness_use_case() -> GetCoursePublicationReadinessUseCase:
     return GetCoursePublicationReadinessUseCase(
         uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+    
+    
+    
+    
+
+def get_file_storage() -> FileStorage:
+    return LocalFileStorage()
+
+
+
+def get_image_processor() -> ImageProcessor:
+    return PillowImageProcessor()
+
+
+
+def get_image_validation_service() -> ImageValidationService:
+    return ImageValidationService()
+
+
+    
+def get_upload_course_cover_image_use_case(
+    image_validation_service: ImageValidationService = Depends(
+        get_image_validation_service
+    ),
+    image_processor: ImageProcessor = Depends(
+        get_image_processor
+    ),
+    file_storage: FileStorage = Depends(
+        get_file_storage
+    ),
+) -> UploadCourseCoverImageUseCase:
+    return UploadCourseCoverImageUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory),
+        image_validation_service=image_validation_service,
+        image_processor=image_processor,
+        file_storage=file_storage,
     )

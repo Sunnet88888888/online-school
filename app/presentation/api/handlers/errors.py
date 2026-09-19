@@ -16,6 +16,7 @@ from app.domain.exceptions import DomainError
 from app.presentation.api.schemas import ErrorResponse
 from app.presentation.exceptions import (
     AuthenticationError,
+    FileTooLargeError,
     PermissionDeniedError as PresentationPermissionDeniedError,
 )
 
@@ -226,6 +227,17 @@ async def course_publication_not_ready_handler(
 
 
 
+async def file_too_large_handler(
+    request: Request,
+    exc: FileTooLargeError,
+) -> JSONResponse:
+    return JSONResponse(
+        status_code=413,
+        content={"detail": str(exc)},
+    )
+
+
+
 
 
 
@@ -258,6 +270,7 @@ def register_exception_handlers(app: FastAPI) -> None:
     app.add_exception_handler(TestCaseNotFoundError, test_case_not_found_handler)
     app.add_exception_handler(CodeSubmissionNotFoundError, code_submission_not_found_handler)
     app.add_exception_handler(CoursePublicationNotReadyError, course_publication_not_ready_handler)
+    app.add_exception_handler(FileTooLargeError, file_too_large_handler, )
 
 
 

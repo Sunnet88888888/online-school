@@ -1,6 +1,7 @@
 from uuid import UUID
+from io import BytesIO
 
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, Response, status, UploadFile, File
 
 from app.application.use_cases.courses.create_course import (
     CreateCourseCommand,
@@ -14,6 +15,7 @@ from app.application.use_cases.courses.update_course import (
     UpdateCourseCommand,
     UpdateCourseUseCase,
 )
+from app.application.use_cases.courses.upload_course_cover_image import UploadCourseCoverImageCommand, UploadCourseCoverImageUseCase
 from app.application.use_cases.lectures.create_lecture import (
     CreateLectureCommand,
     CreateLectureUseCase,
@@ -95,6 +97,7 @@ from app.presentation.api.dependencies import (
     get_archive_course_use_case,   
     get_publish_course_use_case,
     get_get_course_publication_readiness_use_case,
+    get_upload_course_cover_image_use_case,
 )
 from app.presentation.api.schemas import (
     CourseResponse,
@@ -116,7 +119,8 @@ from app.presentation.api.schemas import (
 
 from app.presentation.api.schemas.content import CourseBaseResponse
 
-
+from app.application.dto.uploaded_files import UploadedFile
+from app.presentation.exceptions import FileTooLargeError
 
 
 
@@ -211,6 +215,61 @@ async def update_course(
         )
     )
     return CourseResponse.model_validate(result)
+
+
+
+
+
+@router.post(
+    "/courses/{course_id}/cover",
+    summary = "Upload course image cover",
+    description = "Upload images to cover course, PNG, JPG, JPEG formats are allowed. Max size < 5 MB"
+)
+async def upload_course_cover_image(
+    course_id: UUID,
+    file: UploadFile = File(...),
+    actor: User = Depends(get_current_author_or_admin),
+    use_case: UploadCourseCoverImageUseCase = Depends(get_upload_course_cover_image_use_case),
+):
+    
+    MAX_FILE_SIZE = 5 * 1024 * 1024
+    buffer = BytesIO()
+    total_size = 0
+
+    while chunk := await file.read(1024 * 1024):
+        total_size += len(chunk)
+
+        if total_size > MAX_FILE_SIZE:
+            raise FileTooLargeError("File is too large. It should be less than 5 MB")
+
+        buffer.write(chunk)
+
+    buffer.seek(0)
+     
+    file_data = UploadedFile(
+        filename = file.filename,
+        content_type = file.content_type,
+        stream = buffer,
+    )
+    
+    return await use_case.execute(
+        UploadCourseCoverImageCommand(
+            course_id=course_id,
+            actor=actor,
+            file=file_data,
+        )
+    )
+    
+    
+
+
+
+
+
+
+
+
+
 
 
 @router.delete(

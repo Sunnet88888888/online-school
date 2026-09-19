@@ -82,17 +82,6 @@ class CourseCatalogReadService:
             modules=module_dtos,
         )
 
-        return CourseCatalogCardDTO(
-            id=course.id,
-            title=course.title,
-            description=course.description,
-            short_description=course.preview_description(),
-            cover_image_url=course.cover_image_url,
-            difficulty=course.difficulty,
-            status=course.status,
-            counters=counters,
-            modules=module_dtos,
-        )
 
     async def _build_counters(self, course: Course) -> CourseCatalogCountersDTO:
         modules = await self.module_repository.get_by_ids(course.module_ids)
