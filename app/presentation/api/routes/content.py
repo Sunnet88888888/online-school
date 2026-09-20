@@ -1,7 +1,7 @@
 from uuid import UUID
 
 
-from fastapi import APIRouter, Depends, Security
+from fastapi import APIRouter, Depends, Security, Query
 
 from app.application.use_cases.courses.get_course import (
     GetCourseQuery,
@@ -95,9 +95,10 @@ router = APIRouter(tags=["Content"])
     description='Returns published courses formatted for catalog listing.',
 )
 async def get_courses(
+        search: str = Query(default=''),
         use_case: GetCoursesUseCase = Depends(get_get_courses_use_case),
 ) -> list[CourseCatalogItemResponse]:
-    result = await use_case.execute(GetCoursesQuery())
+    result = await use_case.execute(GetCoursesQuery(search = search))
     return [CourseCatalogItemResponse.model_validate(course) for course in result]
 
 
