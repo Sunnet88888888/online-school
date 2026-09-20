@@ -85,3 +85,53 @@ async def test_search_returns_matching_published_course(
     payload = response.json()
     assert len(payload) == 1
     assert payload[0]['title'] == 'FastAPI Advanced'
+    
+    
+    
+    
+    
+
+@pytest.mark.asyncio
+async def test_search_is_case_insensitive_and_trims_spaces(
+    client,
+    author_auth_headers,
+):
+    await create_minimally_ready_course(
+        client,
+        author_auth_headers,
+        title='FastAPI Advanced',
+        description='Deep dive into async backend architecture.',
+        short_description='Build production APIs.',
+    )
+
+    response = await client.get('/api/courses?search=  FASTAPI  ')
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert len(payload) == 1
+    assert payload[0]['title'] == 'FastAPI Advanced'
+    
+    
+    
+    
+
+
+@pytest.mark.asyncio
+async def test_search_does_not_return_draft_courses(
+    client,
+    author_auth_headers,
+):
+    await client.post(
+        '/api/admin/courses',
+        headers=author_auth_headers,
+        json={
+            'title': 'Hidden FastAPI Draft',
+            'description': 'Should not appear in public search.',
+            'short_description': 'Still private.',
+        },
+    )
+
+    response = await client.get('/api/courses?search=fastapi')
+
+    assert response.status_code == 200
+    assert response.json() == []
