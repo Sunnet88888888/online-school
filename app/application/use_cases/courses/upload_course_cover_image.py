@@ -55,8 +55,8 @@ class UploadCourseCoverImageUseCase:
             
             image_url = f"/media/{image_file_name}"
             
-            course.cover_image_url = image_url
-            
+            course.update_cover_image(image_url)
+
             await self.uow.courses.update(course)
             await self.uow.commit()
             return course
