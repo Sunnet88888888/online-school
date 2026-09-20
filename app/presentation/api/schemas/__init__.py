@@ -108,7 +108,10 @@ from app.presentation.api.schemas.catalog import (
 
 
 
-
+from app.presentation.api.schemas.profile import(
+    UserProfileResponse,
+    UpdateMyProfileRequest,
+)
 
 
 
@@ -177,6 +180,8 @@ __all__ = [
     'CourseCatalogSectionPreviewResponse',
     'CourseCatalogModulePreviewResponse',
     'CourseCatalogCardResponse',
+    'UserProfileResponse',
+    'UpdateMyProfileRequest',
     
     
     

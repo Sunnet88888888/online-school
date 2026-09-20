@@ -108,7 +108,8 @@ from app.infrastructure.image.pillow_image_processor import PillowImageProcessor
 
 from app.application.services.course_image_validator import ImageValidationService
 
-
+from app.application.use_cases.profile.get_my_profile import GetMyProfileUseCase
+from app.application.use_cases.profile.update_my_profile import UpdateMyProfileUseCase
 
 
 
@@ -577,3 +578,14 @@ def get_upload_course_cover_image_use_case(
         image_processor=image_processor,
         file_storage=file_storage,
     )
+    
+    
+    
+def get_get_my_profile_use_case() -> GetMyProfileUseCase:
+    return GetMyProfileUseCase()
+
+
+def get_update_my_profile_use_case(
+        uow: SqlAlchemyUnitOfWork = Depends(get_uow),
+) -> UpdateMyProfileUseCase:
+    return UpdateMyProfileUseCase(uow=uow)
