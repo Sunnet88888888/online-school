@@ -118,6 +118,7 @@ from app.presentation.api.schemas.profile import(
 from app.presentation.api.schemas.student_analytics import(
     StudentCourseAnalyticsResponse,
     StudentModuleAnalyticsResponse,
+    StudentWeakCodeTaskResponse,
     StudentWeakQuestionResponse,
     StudentWeakTaskResponse,
 )
@@ -189,6 +190,7 @@ __all__ = [
     'UpdateMyProfileRequest',
     'StudentCourseAnalyticsResponse',
     'StudentModuleAnalyticsResponse',
+    'StudentWeakCodeTaskResponse',
     'StudentWeakQuestionResponse',
     'StudentWeakTaskResponse',
     

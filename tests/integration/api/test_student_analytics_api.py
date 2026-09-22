@@ -94,6 +94,38 @@ async def test_student_analytics_includes_weak_questions_after_multiple_attempts
     assert len(payload['weak_questions']) == 1
     assert payload['weak_questions'][0]['question_id'] == seeded_interactive_tree.question_id
     assert payload['weak_questions'][0]['attempts_count'] == 2
+
+
+@pytest.mark.asyncio
+async def test_student_analytics_includes_weak_code_tasks_after_multiple_submissions(
+        client,
+        student_auth_headers,
+        seeded_tasks_tree,
+):
+    first_submission = await client.post(
+        f'/api/learning/code-tasks/{seeded_tasks_tree.code_task_id}/submissions',
+        headers=student_auth_headers,
+        json={'source_code': 'print(1)'},
+    )
+    assert first_submission.status_code == 202
+
+    second_submission = await client.post(
+        f'/api/learning/code-tasks/{seeded_tasks_tree.code_task_id}/submissions',
+        headers=student_auth_headers,
+        json={'source_code': 'print(2)'},
+    )
+    assert second_submission.status_code == 202
+
+    analytics_response = await client.get(
+        f'/api/profile/me/courses/{seeded_tasks_tree.course_id}/analytics',
+        headers=student_auth_headers,
+    )
+    assert analytics_response.status_code == 200
+    payload = analytics_response.json()
+
+    assert len(payload['weak_code_tasks']) == 1
+    assert payload['weak_code_tasks'][0]['code_task_id'] == seeded_tasks_tree.code_task_id
+    assert payload['weak_code_tasks'][0]['attempts_count'] == 2
     
     
     

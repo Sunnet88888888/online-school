@@ -1,6 +1,7 @@
 from uuid import UUID
 from pydantic import BaseModel, ConfigDict
 
+
 class StudentModuleAnalyticsResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     module_id: UUID
@@ -9,17 +10,27 @@ class StudentModuleAnalyticsResponse(BaseModel):
     total_sections_count: int
     is_completed: bool
 
+
 class StudentWeakQuestionResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     question_id: UUID
     section_id: UUID
     attempts_count: int
 
+
 class StudentWeakTaskResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     task_id: UUID
     section_id: UUID
     attempts_count: int
+
+
+class StudentWeakCodeTaskResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    code_task_id: UUID
+    section_id: UUID
+    attempts_count: int
+
 
 class StudentCourseAnalyticsResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -35,3 +46,4 @@ class StudentCourseAnalyticsResponse(BaseModel):
     modules: list[StudentModuleAnalyticsResponse]
     weak_questions: list[StudentWeakQuestionResponse]
     weak_tasks: list[StudentWeakTaskResponse]
+    weak_code_tasks: list[StudentWeakCodeTaskResponse]

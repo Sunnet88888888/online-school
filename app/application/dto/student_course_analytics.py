@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from uuid import UUID
 
+
 @dataclass(slots=True)
 class StudentModuleAnalyticsDTO:
     module_id: UUID
@@ -9,17 +10,27 @@ class StudentModuleAnalyticsDTO:
     total_sections_count: int
     is_completed: bool
 
+
 @dataclass(slots=True)
 class StudentWeakQuestionDTO:
     question_id: UUID
     section_id: UUID
     attempts_count: int
 
+
 @dataclass(slots=True)
 class StudentWeakTaskDTO:
     task_id: UUID
     section_id: UUID
     attempts_count: int
+
+
+@dataclass(slots=True)
+class StudentWeakCodeTaskDTO:
+    code_task_id: UUID
+    section_id: UUID
+    attempts_count: int
+
 
 @dataclass(slots=True)
 class StudentCourseAnalyticsDTO:
@@ -35,3 +46,4 @@ class StudentCourseAnalyticsDTO:
     modules: list[StudentModuleAnalyticsDTO] = field(default_factory=list)
     weak_questions: list[StudentWeakQuestionDTO] = field(default_factory=list)
     weak_tasks: list[StudentWeakTaskDTO] = field(default_factory=list)
+    weak_code_tasks: list[StudentWeakCodeTaskDTO] = field(default_factory=list)
