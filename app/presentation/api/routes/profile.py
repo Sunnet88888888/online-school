@@ -1,9 +1,20 @@
+from uuid import UUID
 from fastapi import APIRouter, Depends
 
 from app.application.use_cases.profile.get_my_profile import (
     GetMyProfileQuery,
     GetMyProfileUseCase,
 )
+
+from app.application.use_cases.profile.get_my_course_analytics import (
+    GetMyCourseAnalyticsQuery,
+    GetMyCourseAnalyticsUseCase,
+)
+
+
+
+
+
 from app.application.use_cases.profile.update_my_profile import (
     UpdateMyProfileCommand,
     UpdateMyProfileUseCase,
@@ -13,8 +24,9 @@ from app.presentation.api.dependencies import (
     get_current_user,
     get_get_my_profile_use_case,
     get_update_my_profile_use_case,
+    get_get_my_course_analytics_use_case,
 )
-from app.presentation.api.schemas import ErrorResponse, UpdateMyProfileRequest, UserProfileResponse
+from app.presentation.api.schemas import ErrorResponse, UpdateMyProfileRequest, UserProfileResponse, StudentCourseAnalyticsResponse
 
 router = APIRouter(prefix='/profile', tags=['Profile'])
 
@@ -65,3 +77,37 @@ async def update_my_profile(
         )
     )
     return UserProfileResponse.model_validate(result)
+
+
+
+
+
+@router.get(
+    '/me/courses/{course_id}/analytics',
+    response_model=StudentCourseAnalyticsResponse,
+    summary='Get my course analytics',
+    description='Returns learning analytics of the current student for the selected course.',
+    responses={
+        401: {
+            'description': 'Authentication credentials are missing or invalid.',
+            'model': ErrorResponse,
+        },
+        403: {
+            'description': 'User cannot view own learning analytics.',
+            'model': ErrorResponse,
+        },
+        404: {
+            'description': 'Course was not found.',
+            'model': ErrorResponse,
+        },
+    },
+)
+async def get_my_course_analytics(
+    course_id: UUID,
+    actor: User = Depends(get_current_user),
+    use_case: GetMyCourseAnalyticsUseCase = Depends(get_get_my_course_analytics_use_case),
+) -> StudentCourseAnalyticsResponse:
+    result = await use_case.execute(
+        GetMyCourseAnalyticsQuery(actor=actor, course_id=course_id)
+    )
+    return StudentCourseAnalyticsResponse.model_validate(result)

@@ -111,6 +111,10 @@ from app.application.services.course_image_validator import ImageValidationServi
 from app.application.use_cases.profile.get_my_profile import GetMyProfileUseCase
 from app.application.use_cases.profile.update_my_profile import UpdateMyProfileUseCase
 
+from app.application.use_cases.profile.get_my_course_analytics import (
+    GetMyCourseAnalyticsUseCase,
+)
+
 
 
 
@@ -589,3 +593,10 @@ def get_update_my_profile_use_case(
         uow: SqlAlchemyUnitOfWork = Depends(get_uow),
 ) -> UpdateMyProfileUseCase:
     return UpdateMyProfileUseCase(uow=uow)
+
+
+
+def get_get_my_course_analytics_use_case(
+    uow: SqlAlchemyUnitOfWork = Depends(get_uow),
+) -> GetMyCourseAnalyticsUseCase:
+    return GetMyCourseAnalyticsUseCase(uow=uow)
