@@ -119,6 +119,13 @@ from app.application.use_cases.profile.get_my_teaching_course_analytics import (
     GetMyTeachingCourseAnalyticsUseCase,
 )
 
+from app.application.services.course_rating_read_service import CourseRatingReadService
+
+
+
+from app.application.use_cases.course_reviews.get_course_reviews import GetCourseReviewsUseCase
+from app.application.use_cases.course_reviews.upsert_course_review import UpsertCourseReviewUseCase
+
 
 
 
@@ -145,6 +152,9 @@ def get_get_courses_use_case(
             question_repository=uow.questions,
             task_repository=uow.tasks,
             code_task_repository=uow.code_tasks,
+            rating_read_service=CourseRatingReadService(
+                review_repository=uow.course_reviews,
+            ),
         ),
     )
 
@@ -168,6 +178,7 @@ def get_get_course_use_case(
             question_repository=uow.questions,
             task_repository=uow.tasks,
             code_task_repository=uow.code_tasks,
+            rating_read_service=CourseRatingReadService(review_repository=uow.course_reviews),
         ),
     )
     
@@ -608,5 +619,19 @@ def get_get_my_course_analytics_use_case(
 
 def get_get_my_teaching_course_analytics_use_case() -> GetMyTeachingCourseAnalyticsUseCase:
     return GetMyTeachingCourseAnalyticsUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+    
+    
+    
+    
+def get_upsert_course_review_use_case() -> UpsertCourseReviewUseCase:
+    return UpsertCourseReviewUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+
+
+def get_get_course_reviews_use_case() -> GetCourseReviewsUseCase:
+    return GetCourseReviewsUseCase(
         uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
     )

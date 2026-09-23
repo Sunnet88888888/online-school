@@ -13,6 +13,12 @@ from app.infrastructure.database.models.user_model import UserModel
 from app.infrastructure.database.models.code_submission_model import CodeSubmissionModel
 from app.infrastructure.database.models.code_task_model import CodeTaskModel
 from app.infrastructure.database.models.test_case_model import TestCaseModel
+from app.infrastructure.database.models.course_review_model import CourseReviewModel
+
+
+
+
+
 
 __all__ = [
     'Base',
@@ -30,4 +36,5 @@ __all__ = [
     'CodeSubmissionModel',
     'CodeTaskModel',
     'TestCaseModel',
+    'CourseReviewModel',
 ]

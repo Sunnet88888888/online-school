@@ -137,7 +137,11 @@ from app.presentation.api.schemas.author_course_analytics import(
 
 
 
-
+from app.presentation.api.schemas.course_reviews import (
+    UpsertCourseReviewRequest,
+    CourseReviewResponse,
+    
+)
 
 
 

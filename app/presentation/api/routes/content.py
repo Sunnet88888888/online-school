@@ -30,6 +30,9 @@ from app.presentation.api.dependencies import (
     get_get_lecture_use_case,
     get_get_question_use_case,
     get_get_task_use_case,
+    get_current_user,
+    get_get_course_reviews_use_case,
+    get_upsert_course_review_use_case,
 )
 from app.presentation.api.schemas import (
     CourseListItemResponse,
@@ -39,6 +42,14 @@ from app.presentation.api.schemas import (
     LectureResponse,
 )
 
+from app.application.use_cases.course_reviews.get_course_reviews import (
+    GetCourseReviewsQuery,
+    GetCourseReviewsUseCase,
+)
+from app.application.use_cases.course_reviews.upsert_course_review import (
+    UpsertCourseReviewCommand,
+    UpsertCourseReviewUseCase,
+)
 
 from app.domain.entities.user import User
 
@@ -69,7 +80,7 @@ from app.presentation.api.schemas import (
 )
 
 
-
+from app.presentation.api.schemas import CourseReviewResponse, UpsertCourseReviewRequest
 
 
 
@@ -262,3 +273,75 @@ async def get_code_task(
         )
     )
     return CodeTaskDetailsResponse.model_validate(result)
+
+
+
+
+@router.get(
+    '/courses/{course_id}/reviews',
+    response_model=list[CourseReviewResponse],
+    summary='Get course reviews',
+    description='Returns public reviews for a published course.',
+    responses={
+        404: {
+            'description': 'Course was not found.',
+            'model': ErrorResponse,
+        },
+    },
+)
+async def get_course_reviews(
+        course_id: UUID,
+        use_case: GetCourseReviewsUseCase = Depends(get_get_course_reviews_use_case),
+) -> list[CourseReviewResponse]:
+    result = await use_case.execute(
+        GetCourseReviewsQuery(course_id=course_id)
+    )
+    return [
+        CourseReviewResponse.model_validate(review)
+        for review in result
+    ]
+
+
+@router.put(
+    '/courses/{course_id}/reviews/me',
+    response_model=CourseReviewResponse,
+    summary='Create or update my course review',
+    description=(
+            'Creates or updates the current student review after at least '
+            '80% of the course sections have been completed.'
+    ),
+    responses={
+        401: {
+            'description': 'Authentication credentials are missing or invalid.',
+            'model': ErrorResponse,
+        },
+        403: {
+            'description': (
+                    'Only a student who completed at least 80% of the course '
+                    'can create or update a review.'
+            ),
+            'model': ErrorResponse,
+        },
+        404: {
+            'description': 'Course was not found.',
+            'model': ErrorResponse,
+        },
+    },
+)
+async def upsert_my_course_review(
+        course_id: UUID,
+        request: UpsertCourseReviewRequest,
+        actor: User = Depends(get_current_user),
+        use_case: UpsertCourseReviewUseCase = Depends(
+            get_upsert_course_review_use_case,
+        ),
+) -> CourseReviewResponse:
+    result = await use_case.execute(
+        UpsertCourseReviewCommand(
+            actor=actor,
+            course_id=course_id,
+            rating=request.rating,
+            text=request.text,
+        )
+    )
+    return CourseReviewResponse.model_validate(result)

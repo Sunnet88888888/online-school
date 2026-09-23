@@ -40,7 +40,9 @@ from app.infrastructure.database.repositories.test_case_repository import (
     SqlAlchemyTestCaseRepository,
 )
 
-
+from app.infrastructure.database.repositories.course_review_repository import (
+    SqlAlchemyCourseReviewRepository,
+)
 
 
 
@@ -61,4 +63,5 @@ __all__ = [
     'SqlAlchemyCodeTaskRepository',
     'SqlAlchemyTestCaseRepository',
     'SqlAlchemyCodeSubmissionRepository',
+    'SqlAlchemyCourseReviewRepository',
 ]

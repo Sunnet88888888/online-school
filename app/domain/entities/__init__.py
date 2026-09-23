@@ -14,7 +14,7 @@ from app.domain.entities.code_submission import CodeSubmission, CodeSubmissionSt
 from app.domain.entities.test_case import TestCase
 
 from app.domain.entities.execution_result import ExecutionResult, ExecutionStatus
-
+from app.domain.entities.course_review import CourseReview
 
 
 __all__ = [
@@ -37,4 +37,5 @@ __all__ = [
     'TestCase',
     'ExecutionResult',
     'ExecutionStatus',
+    'CourseReview',
 ]

@@ -12,7 +12,7 @@ from app.application.interfaces.repositories.user_repository import UserReposito
 from app.application.interfaces.repositories.code_task_repository import CodeTaskRepository
 from app.application.interfaces.repositories.test_case_repository import TestCaseRepository
 from app.application.interfaces.repositories.code_submission_repository import CodeSubmissionRepository
-
+from app.application.interfaces.repositories.course_review_repository import CourseReviewRepository
 
 
 
@@ -33,4 +33,5 @@ __all__ = [
     'CodeTaskRepository',
     'TestCaseRepository',
     'CodeSubmissionRepository',
+    'CourseReviewRepository',
 ]
