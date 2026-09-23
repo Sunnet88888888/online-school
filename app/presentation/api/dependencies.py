@@ -115,6 +115,9 @@ from app.application.use_cases.profile.get_my_course_analytics import (
     GetMyCourseAnalyticsUseCase,
 )
 
+from app.application.use_cases.profile.get_my_teaching_course_analytics import (
+    GetMyTeachingCourseAnalyticsUseCase,
+)
 
 
 
@@ -600,3 +603,10 @@ def get_get_my_course_analytics_use_case(
     uow: SqlAlchemyUnitOfWork = Depends(get_uow),
 ) -> GetMyCourseAnalyticsUseCase:
     return GetMyCourseAnalyticsUseCase(uow=uow)
+
+
+
+def get_get_my_teaching_course_analytics_use_case() -> GetMyTeachingCourseAnalyticsUseCase:
+    return GetMyTeachingCourseAnalyticsUseCase(
+        uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )

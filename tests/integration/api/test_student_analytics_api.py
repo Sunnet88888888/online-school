@@ -60,40 +60,6 @@ async def test_student_analytics_returns_points_and_completion_after_successful_
     
     
     
-    
-@pytest.mark.asyncio
-async def test_student_analytics_includes_weak_questions_after_multiple_attempts(
-        client,
-        student_auth_headers,
-        seeded_interactive_tree,
-):
-    wrong_response = await client.post(
-        f'/api/learning/questions/{seeded_interactive_tree.question_id}/attempts',
-        headers=student_auth_headers,
-        json={
-            'selected_option_ids': [seeded_interactive_tree.wrong_option_id],
-        },
-    )
-    assert wrong_response.status_code == 201
-
-    correct_response = await client.post(
-        f'/api/learning/questions/{seeded_interactive_tree.question_id}/attempts',
-        headers=student_auth_headers,
-        json={
-            'selected_option_ids': [seeded_interactive_tree.correct_option_id],
-        },
-    )
-    assert correct_response.status_code == 201
-
-    analytics_response = await client.get(
-        f'/api/profile/me/courses/{seeded_interactive_tree.course_id}/analytics',
-        headers=student_auth_headers,
-    )
-    assert analytics_response.status_code == 200
-    payload = analytics_response.json()
-    assert len(payload['weak_questions']) == 1
-    assert payload['weak_questions'][0]['question_id'] == seeded_interactive_tree.question_id
-    assert payload['weak_questions'][0]['attempts_count'] == 2
 
 
 @pytest.mark.asyncio

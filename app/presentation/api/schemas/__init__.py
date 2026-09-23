@@ -126,6 +126,25 @@ from app.presentation.api.schemas.student_analytics import(
 
 
 
+
+from app.presentation.api.schemas.author_course_analytics import(
+    AuthorCourseAnalyticsResponse,
+    AuthorModuleAnalyticsResponse,
+    DifficultTaskAnalyticsResponse,
+    DifficultQuestionAnalyticsResponse,
+    ProblematicCodeTaskAnalyticsResponse,
+)
+
+
+
+
+
+
+
+
+
+
+
 __all__ = [
     "CourseListItemResponse",
     "CourseResponse",
@@ -193,7 +212,10 @@ __all__ = [
     'StudentWeakCodeTaskResponse',
     'StudentWeakQuestionResponse',
     'StudentWeakTaskResponse',
-    
-    
+    'AuthorCourseAnalyticsResponse',
+    'AuthorModuleAnalyticsResponse',
+    'DifficultTaskAnalyticsResponse',
+    'DifficultQuestionAnalyticsResponse',
+    'ProblematicCodeTaskAnalyticsResponse',
     
 ]
