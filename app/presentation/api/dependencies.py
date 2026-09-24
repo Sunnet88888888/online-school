@@ -89,6 +89,7 @@ from app.application.use_cases.courses.publish_course import PublishCourseUseCas
 from app.application.services.course_content_access_service import (
     CourseContentAccessService,
 )
+from app.application.services.content_target_resolver import ContentTargetResolver
 
 
 from app.application.use_cases.courses.get_course_publication_readiness import (
@@ -126,7 +127,7 @@ from app.application.services.course_rating_read_service import CourseRatingRead
 from app.application.use_cases.course_reviews.get_course_reviews import GetCourseReviewsUseCase
 from app.application.use_cases.course_reviews.upsert_course_review import UpsertCourseReviewUseCase
 
-
+from app.application.use_cases.comments.create_comment import CreateCommentUseCase
 
 
 
@@ -634,4 +635,26 @@ def get_upsert_course_review_use_case() -> UpsertCourseReviewUseCase:
 def get_get_course_reviews_use_case() -> GetCourseReviewsUseCase:
     return GetCourseReviewsUseCase(
         uow=SqlAlchemyUnitOfWork(session_factory=SessionFactory)
+    )
+    
+    
+def get_create_comment_use_case(
+    uow: SqlAlchemyUnitOfWork = Depends(get_uow),
+) -> CreateCommentUseCase:
+    return CreateCommentUseCase(
+        uow=uow,
+        resolver=ContentTargetResolver(
+            lecture_repository=uow.lectures,
+            task_repository=uow.tasks,
+            code_task_repository=uow.code_tasks,
+            question_repository=uow.questions,
+            section_repository=uow.sections,
+            module_repository=uow.modules,
+            course_repository=uow.courses,
+        ),
+        access_service=CourseContentAccessService(
+            course_repository=uow.courses,
+            module_repository=uow.modules,
+            section_repository=uow.sections,
+        ),
     )

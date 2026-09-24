@@ -1,7 +1,7 @@
 from uuid import UUID
 
 
-from fastapi import APIRouter, Depends, Security, Query
+from fastapi import APIRouter, Depends, Security, Query, status
 
 from app.application.use_cases.courses.get_course import (
     GetCourseQuery,
@@ -33,6 +33,7 @@ from app.presentation.api.dependencies import (
     get_current_user,
     get_get_course_reviews_use_case,
     get_upsert_course_review_use_case,
+    get_create_comment_use_case,
 )
 from app.presentation.api.schemas import (
     CourseListItemResponse,
@@ -82,12 +83,17 @@ from app.presentation.api.schemas import (
 
 from app.presentation.api.schemas import CourseReviewResponse, UpsertCourseReviewRequest
 
+from app.presentation.api.schemas import (
+    CommentResponse,
+    CreateCommentRequest,
+    UpdateCommentRequest,
+)
 
 
 
 
-
-
+from app.domain.entities.comment import CommentTargetType, CommentTarget
+from app.application.use_cases.comments.create_comment import CreateCommentUseCase, CreateCommentCommand
 
 
 
@@ -345,3 +351,44 @@ async def upsert_my_course_review(
         )
     )
     return CourseReviewResponse.model_validate(result)
+
+
+
+
+
+
+@router.post(
+    "/comments/{target_type}/{target_id}",
+    response_model=CommentResponse,
+    status_code=status.HTTP_201_CREATED,
+    description=
+        "Create a new comment for a course content item. "
+        "The target content is identified by `target_type` and `target_id`. "
+        "Supported target types are `lecture`, `task`, `code_task`, and `question`. "
+        "The authenticated user becomes the author of the comment automatically. "
+        "The target content must exist and belong to a course that the user is allowed to access. "
+        "Students can comment only on published courses they have access to; "
+        "course authors can comment on content belonging to their own courses; "
+        "administrators can comment on any accessible course content. "
+        "The comment text must contain between 1 and 2000 characters."
+        
+)
+async def create_comment(
+    target_type: CommentTargetType,
+    target_id: UUID,
+    data: CreateCommentRequest,
+    actor: User = Depends(get_current_user),
+    use_case: CreateCommentUseCase = Depends(get_create_comment_use_case),
+) -> CommentResponse:
+    comment = await use_case.execute(
+        CreateCommentCommand(
+            actor=actor,
+            target=CommentTarget(
+                type=target_type,
+                id=target_id,
+            ),
+            text=data.text,
+        )
+    )
+
+    return CommentResponse.model_validate(comment)

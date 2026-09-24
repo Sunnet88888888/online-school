@@ -17,6 +17,7 @@ from app.infrastructure.database.repositories import (
     SqlAlchemyTestCaseRepository,
     SqlAlchemyCodeSubmissionRepository,
     SqlAlchemyCourseReviewRepository,
+    SqlAlchemyCommentRepository,
 )
 
 
@@ -51,6 +52,7 @@ class SqlAlchemyUnitOfWork(UnitOfWork):
         self.test_cases = SqlAlchemyTestCaseRepository(self.session)
         self.code_submissions = SqlAlchemyCodeSubmissionRepository(self.session)
         self.course_reviews = SqlAlchemyCourseReviewRepository(self.session)
+        self.comments = SqlAlchemyCommentRepository(self.session)
         return self
 
     async def __aexit__(self, exc_type, exc, tb) -> None:

@@ -16,6 +16,7 @@ from app.application.interfaces.repositories import (
     TestCaseRepository,
     CodeSubmissionRepository,
     CourseReviewRepository, 
+    CommentRepository,
 )
 
 
@@ -36,6 +37,7 @@ class UnitOfWork(ABC):
     test_cases: TestCaseRepository
     code_submissions: CodeSubmissionRepository
     course_reviews: CourseReviewRepository
+    comments: CommentRepository
 
     
     

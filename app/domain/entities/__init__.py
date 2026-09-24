@@ -15,6 +15,7 @@ from app.domain.entities.test_case import TestCase
 
 from app.domain.entities.execution_result import ExecutionResult, ExecutionStatus
 from app.domain.entities.course_review import CourseReview
+from app.domain.entities.comment import Comment, CommentTarget, CommentTargetType
 
 
 __all__ = [
@@ -38,4 +39,7 @@ __all__ = [
     'ExecutionResult',
     'ExecutionStatus',
     'CourseReview',
+    'Comment',
+    'CommentTarget',
+    'CommentTargetType',
 ]

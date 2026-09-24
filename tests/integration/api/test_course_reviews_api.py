@@ -144,10 +144,6 @@ async def test_author_cannot_leave_course_review(
     
     
     
-    
-    
-    
-    
 @pytest.mark.asyncio
 async def test_course_catalog_includes_rating_after_review(
         client,

@@ -144,7 +144,11 @@ from app.presentation.api.schemas.course_reviews import (
 )
 
 
-
+from app.presentation.api.schemas.comments import (
+    CommentResponse,
+    CreateCommentRequest,
+    UpdateCommentRequest,
+)
 
 
 
@@ -221,5 +225,7 @@ __all__ = [
     'DifficultTaskAnalyticsResponse',
     'DifficultQuestionAnalyticsResponse',
     'ProblematicCodeTaskAnalyticsResponse',
+    'UpsertCourseReviewRequest',
+    'CourseReviewResponse',
     
 ]

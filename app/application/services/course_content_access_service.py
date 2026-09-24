@@ -4,7 +4,7 @@ from app.application.interfaces.repositories.course_repository import CourseRepo
 from app.application.interfaces.repositories.module_repository import ModuleRepository
 from app.application.interfaces.repositories.section_repository import SectionRepository
 from app.domain.entities.course import Course
-from app.domain.entities.user import User
+from app.domain.entities.user import User, UserRole
 
 
 class CourseContentAccessService:
@@ -63,6 +63,30 @@ class CourseContentAccessService:
             return True
 
         if course.is_owned_by(actor.id):
+            return True
+
+        return False
+
+
+
+    async def can_comment_on_course_content(
+        self,
+        course: Course,
+        actor: User,
+    ) -> bool:
+
+        if actor.can_manage_platform():
+            return True
+
+        if course.is_owned_by(actor.id):
+            return True
+
+        if actor.role == UserRole.STUDENT:
+            if not course.is_publicly_visible():
+                return False
+            # TODO: после реализации enrollment
+            # проверить, записан ли student на курс
+            
             return True
 
         return False
