@@ -15,7 +15,9 @@ from app.infrastructure.database.models.code_task_model import CodeTaskModel
 from app.infrastructure.database.models.test_case_model import TestCaseModel
 from app.infrastructure.database.models.course_review_model import CourseReviewModel
 from app.infrastructure.database.models.comment_model import CommentModel
-
+from app.infrastructure.database.models.student_activity_model import (
+    StudentActivityModel,
+)
 
 
 
@@ -37,4 +39,5 @@ __all__ = [
     'CodeTaskModel',
     'TestCaseModel',
     'CourseReviewModel',
+    'StudentActivityModel',
 ]

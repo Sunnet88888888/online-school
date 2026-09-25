@@ -17,6 +17,7 @@ from app.application.interfaces.repositories import (
     CodeSubmissionRepository,
     CourseReviewRepository, 
     CommentRepository,
+    StudentActivityRepository,
 )
 
 
@@ -38,6 +39,7 @@ class UnitOfWork(ABC):
     code_submissions: CodeSubmissionRepository
     course_reviews: CourseReviewRepository
     comments: CommentRepository
+    student_activities: StudentActivityRepository
 
     
     

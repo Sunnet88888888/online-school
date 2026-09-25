@@ -44,6 +44,7 @@ from app.infrastructure.database.models import (
     QuestionModel,
     SectionModel,
     UserModel,
+    StudentActivityModel,
 )
 
 
@@ -111,6 +112,7 @@ async def client(app) -> AsyncIterator[AsyncClient]:
 async def clear_database(session_factory) -> None:
     async with session_factory() as session:
         for model in [
+            StudentActivityModel,
             CourseReviewModel,
             CommentModel,
             AnswerOptionModel,
