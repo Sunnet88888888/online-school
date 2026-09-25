@@ -14,6 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 import app.presentation.api.dependencies as api_dependencies
 from app.infrastructure.database.models import (
     Base,
+    CommentModel,
     CourseModel,
     LectureModel,
     ModuleModel,
@@ -111,6 +112,7 @@ async def clear_database(session_factory) -> None:
     async with session_factory() as session:
         for model in [
             CourseReviewModel,
+            CommentModel,
             AnswerOptionModel,
             QuestionAttemptModel,
             TaskAttemptModel,

@@ -23,7 +23,7 @@ class UpdateCommentUseCase:
     async def execute(
         self,
         command: UpdateCommentCommand,
-    ) -> Comment:
+    ) -> CommentDTO:
         comment = await self.uow.comments.get_by_id(command.comment_id)
 
         if comment is None:
