@@ -34,6 +34,9 @@ from app.presentation.api.dependencies import (
     get_get_course_reviews_use_case,
     get_upsert_course_review_use_case,
     get_create_comment_use_case,
+    get_update_comment_use_case,
+    get_delete_comment_use_case,
+    get_get_comments_use_case,
 )
 from app.presentation.api.schemas import (
     CourseListItemResponse,
@@ -90,33 +93,41 @@ from app.presentation.api.schemas import (
 )
 
 
-
+from app.application.use_cases.comments.update_comment_use_case import (
+    UpdateCommentCommand,
+    UpdateCommentUseCase,
+)
 
 from app.domain.entities.comment import CommentTargetType, CommentTarget
-from app.application.use_cases.comments.create_comment import CreateCommentUseCase, CreateCommentCommand
+from app.application.use_cases.comments.create_comment import (
+    CreateCommentUseCase,
+    CreateCommentCommand,
+)
+from app.application.use_cases.comments.delete_comment_use_case import (
+    DeleteCommentUseCase,
+    DeleteCommentCommand,
+)
 
 
-
-
-
-
-
-
+from app.application.use_cases.comments.get_comments_use_case import (
+    GetCommentsCommand,
+    GetCommentsUseCase,
+)
 
 router = APIRouter(tags=["Content"])
 
 
 @router.get(
-    '/courses',
+    "/courses",
     response_model=list[CourseCatalogItemResponse],
-    summary='Get public course catalog',
-    description='Returns published courses formatted for catalog listing.',
+    summary="Get public course catalog",
+    description="Returns published courses formatted for catalog listing.",
 )
 async def get_courses(
-        search: str = Query(default=''),
-        difficulty: CourseDifficulty | None = Query(default=None),
-        tag: list[str] = Query(default=[]),
-        use_case: GetCoursesUseCase = Depends(get_get_courses_use_case),
+    search: str = Query(default=""),
+    difficulty: CourseDifficulty | None = Query(default=None),
+    tag: list[str] = Query(default=[]),
+    use_case: GetCoursesUseCase = Depends(get_get_courses_use_case),
 ) -> list[CourseCatalogItemResponse]:
     result = await use_case.execute(
         GetCoursesQuery(
@@ -128,26 +139,22 @@ async def get_courses(
     return [CourseCatalogItemResponse.model_validate(course) for course in result]
 
 
-
-
-
-
 @router.get(
-    '/courses/{course_id}',
+    "/courses/{course_id}",
     response_model=CourseCatalogCardResponse,
-    summary='Get public course page',
-    description='Returns a detailed course card for the catalog page.',
+    summary="Get public course page",
+    description="Returns a detailed course card for the catalog page.",
     responses={
         404: {
-            'description': 'Course was not found.',
-            'model': ErrorResponse,
+            "description": "Course was not found.",
+            "model": ErrorResponse,
         },
     },
 )
 async def get_course(
-        course_id: UUID,
-        current_user: User | None = Depends(get_current_user_or_none),
-        use_case: GetCourseUseCase = Depends(get_get_course_use_case),
+    course_id: UUID,
+    current_user: User | None = Depends(get_current_user_or_none),
+    use_case: GetCourseUseCase = Depends(get_get_course_use_case),
 ) -> CourseCatalogCardResponse:
     result = await use_case.execute(
         GetCourseQuery(
@@ -158,19 +165,13 @@ async def get_course(
     return CourseCatalogCardResponse.model_validate(result)
 
 
-
-
-
-
-
-
 @router.get(
     "/courses/{course_id}/structure",
     response_model=CourseStructureResponse,
     summary="Get course structure",
     description=(
-            "Returns the course navigation tree: modules, sections and lectures "
-            "without full lecture content."
+        "Returns the course navigation tree: modules, sections and lectures "
+        "without full lecture content."
     ),
     responses={
         404: {
@@ -180,9 +181,9 @@ async def get_course(
     },
 )
 async def get_course_structure(
-        course_id: UUID,
-        current_user: User | None = Depends(get_current_user_or_none),
-        use_case: GetCourseStructureUseCase = Depends(get_get_course_structure_use_case),
+    course_id: UUID,
+    current_user: User | None = Depends(get_current_user_or_none),
+    use_case: GetCourseStructureUseCase = Depends(get_get_course_structure_use_case),
 ) -> CourseStructureResponse:
     result = await use_case.execute(
         GetCourseStructureQuery(
@@ -206,9 +207,9 @@ async def get_course_structure(
     },
 )
 async def get_lecture(
-        lecture_id: UUID,
-        current_user: User | None = Depends(get_current_user_or_none),
-        use_case: GetLectureUseCase = Depends(get_get_lecture_use_case),
+    lecture_id: UUID,
+    current_user: User | None = Depends(get_current_user_or_none),
+    use_case: GetLectureUseCase = Depends(get_get_lecture_use_case),
 ) -> LectureResponse:
     result = await use_case.execute(
         GetLectureQuery(
@@ -219,13 +220,11 @@ async def get_lecture(
     return LectureResponse.model_validate(result)
 
 
-
-
 @router.get(
-    '/questions/{question_id}',
+    "/questions/{question_id}",
     response_model=QuestionDetailsResponse,
-    summary='Get question by ID',
-    description='Returns the content of a single question with public answer options.',
+    summary="Get question by ID",
+    description="Returns the content of a single question with public answer options.",
 )
 async def get_question(
     question_id: UUID,
@@ -242,10 +241,10 @@ async def get_question(
 
 
 @router.get(
-    '/tasks/{task_id}',
+    "/tasks/{task_id}",
     response_model=TaskDetailsResponse,
-    summary='Get task by ID',
-    description='Returns the content of a single task without author check configuration.',
+    summary="Get task by ID",
+    description="Returns the content of a single task without author check configuration.",
 )
 async def get_task(
     task_id: UUID,
@@ -262,10 +261,10 @@ async def get_task(
 
 
 @router.get(
-    '/code-tasks/{code_task_id}',
+    "/code-tasks/{code_task_id}",
     response_model=CodeTaskDetailsResponse,
-    summary='Get code task by ID',
-    description='Returns the content of a single code task and its editor configuration.',
+    summary="Get code task by ID",
+    description="Returns the content of a single code task and its editor configuration.",
 )
 async def get_code_task(
     code_task_id: UUID,
@@ -281,66 +280,59 @@ async def get_code_task(
     return CodeTaskDetailsResponse.model_validate(result)
 
 
-
-
 @router.get(
-    '/courses/{course_id}/reviews',
+    "/courses/{course_id}/reviews",
     response_model=list[CourseReviewResponse],
-    summary='Get course reviews',
-    description='Returns public reviews for a published course.',
+    summary="Get course reviews",
+    description="Returns public reviews for a published course.",
     responses={
         404: {
-            'description': 'Course was not found.',
-            'model': ErrorResponse,
+            "description": "Course was not found.",
+            "model": ErrorResponse,
         },
     },
 )
 async def get_course_reviews(
-        course_id: UUID,
-        use_case: GetCourseReviewsUseCase = Depends(get_get_course_reviews_use_case),
+    course_id: UUID,
+    use_case: GetCourseReviewsUseCase = Depends(get_get_course_reviews_use_case),
 ) -> list[CourseReviewResponse]:
-    result = await use_case.execute(
-        GetCourseReviewsQuery(course_id=course_id)
-    )
-    return [
-        CourseReviewResponse.model_validate(review)
-        for review in result
-    ]
+    result = await use_case.execute(GetCourseReviewsQuery(course_id=course_id))
+    return [CourseReviewResponse.model_validate(review) for review in result]
 
 
 @router.put(
-    '/courses/{course_id}/reviews/me',
+    "/courses/{course_id}/reviews/me",
     response_model=CourseReviewResponse,
-    summary='Create or update my course review',
+    summary="Create or update my course review",
     description=(
-            'Creates or updates the current student review after at least '
-            '80% of the course sections have been completed.'
+        "Creates or updates the current student review after at least "
+        "80% of the course sections have been completed."
     ),
     responses={
         401: {
-            'description': 'Authentication credentials are missing or invalid.',
-            'model': ErrorResponse,
+            "description": "Authentication credentials are missing or invalid.",
+            "model": ErrorResponse,
         },
         403: {
-            'description': (
-                    'Only a student who completed at least 80% of the course '
-                    'can create or update a review.'
+            "description": (
+                "Only a student who completed at least 80% of the course "
+                "can create or update a review."
             ),
-            'model': ErrorResponse,
+            "model": ErrorResponse,
         },
         404: {
-            'description': 'Course was not found.',
-            'model': ErrorResponse,
+            "description": "Course was not found.",
+            "model": ErrorResponse,
         },
     },
 )
 async def upsert_my_course_review(
-        course_id: UUID,
-        request: UpsertCourseReviewRequest,
-        actor: User = Depends(get_current_user),
-        use_case: UpsertCourseReviewUseCase = Depends(
-            get_upsert_course_review_use_case,
-        ),
+    course_id: UUID,
+    request: UpsertCourseReviewRequest,
+    actor: User = Depends(get_current_user),
+    use_case: UpsertCourseReviewUseCase = Depends(
+        get_upsert_course_review_use_case,
+    ),
 ) -> CourseReviewResponse:
     result = await use_case.execute(
         UpsertCourseReviewCommand(
@@ -353,25 +345,44 @@ async def upsert_my_course_review(
     return CourseReviewResponse.model_validate(result)
 
 
+@router.get(
+    "/comments/{target_type}/{target_id}",
+    response_model=list[CommentResponse],
+    status_code=status.HTTP_200_OK,
+    description="Get comments",
+)
+async def get_comments(
+    target_type: CommentTargetType,
+    target_id: UUID,
+    actor: User = Depends(get_current_user),
+    use_case: GetCommentsUseCase = Depends(get_get_comments_use_case),
+):
+    comments = await use_case.execute(
+        GetCommentsCommand(
+            actor=actor,
+            target=CommentTarget(
+                type=target_type,
+                id=target_id,
+            ),
+        )
+    )
 
-
+    return [CommentResponse.model_validate(comment) for comment in comments]
 
 
 @router.post(
     "/comments/{target_type}/{target_id}",
     response_model=CommentResponse,
     status_code=status.HTTP_201_CREATED,
-    description=
-        "Create a new comment for a course content item. "
-        "The target content is identified by `target_type` and `target_id`. "
-        "Supported target types are `lecture`, `task`, `code_task`, and `question`. "
-        "The authenticated user becomes the author of the comment automatically. "
-        "The target content must exist and belong to a course that the user is allowed to access. "
-        "Students can comment only on published courses they have access to; "
-        "course authors can comment on content belonging to their own courses; "
-        "administrators can comment on any accessible course content. "
-        "The comment text must contain between 1 and 2000 characters."
-        
+    description="Create a new comment for a course content item. "
+    "The target content is identified by `target_type` and `target_id`. "
+    "Supported target types are `lecture`, `task`, `code_task`, and `question`. "
+    "The authenticated user becomes the author of the comment automatically. "
+    "The target content must exist and belong to a course that the user is allowed to access. "
+    "Students can comment only on published courses they have access to; "
+    "course authors can comment on content belonging to their own courses; "
+    "administrators can comment on any accessible course content. "
+    "The comment text must contain between 1 and 2000 characters.",
 )
 async def create_comment(
     target_type: CommentTargetType,
@@ -392,3 +403,45 @@ async def create_comment(
     )
 
     return CommentResponse.model_validate(comment)
+
+
+@router.put(
+    "/comments/{comment_id}",
+    response_model=CommentResponse,
+    status_code=status.HTTP_200_OK,
+    description="Update comment by ID. Only comment's author can update comment !",
+)
+async def update_comment(
+    comment_id: UUID,
+    data: UpdateCommentRequest,
+    actor: User = Depends(get_current_user),
+    use_case: UpdateCommentUseCase = Depends(get_update_comment_use_case),
+) -> CommentResponse:
+    comment = await use_case.execute(
+        UpdateCommentCommand(
+            actor=actor,
+            comment_id=comment_id,
+            text=data.text,
+        )
+    )
+    return CommentResponse.model_validate(comment)
+
+
+@router.delete(
+    "/comments/{comment_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    description="Delete comment by ID. Student can delete his own comments, "
+    "author of course can delete every comment linked to his course, "
+    "admin can delete every comment on the platform.",
+)
+async def remove_comment(
+    comment_id: UUID,
+    actor: User = Depends(get_current_user),
+    use_case: DeleteCommentUseCase = Depends(get_delete_comment_use_case),
+):
+    await use_case.execute(
+        DeleteCommentCommand(
+            actor=actor,
+            comment_id=comment_id,
+        )
+    )

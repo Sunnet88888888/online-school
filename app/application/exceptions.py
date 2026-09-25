@@ -94,3 +94,8 @@ class InvalidFileMimeTypeError(FileValidationError):
 
 class InvalidFileError(FileValidationError):
     pass
+
+
+
+class CommentNotFoundError(ApplicationError):
+    pass

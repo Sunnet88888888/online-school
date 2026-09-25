@@ -57,15 +57,10 @@ class SqlAlchemyCommentRepository(CommentRepository):
 
         result = await self.session.execute(stmt)
 
-        return [
-            CommentMapper.to_domain(model)
-            for model in result.scalars().all()
-        ]
+        return [CommentMapper.to_domain(model) for model in result.scalars().all()]
 
     async def add(self, comment: Comment) -> None:
-        self.session.add(
-            CommentMapper.to_model(comment)
-        )
+        self.session.add(CommentMapper.to_model(comment))
         await self.session.flush()
 
     async def update(self, comment: Comment) -> None:

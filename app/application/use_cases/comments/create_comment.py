@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from uuid import UUID, uuid4
-from app.domain.entities.user import User, UserRole
+from uuid import uuid4
+from app.domain.entities.user import User
 from app.domain.entities.comment import CommentTarget
 from app.application.interfaces.unit_of_work import UnitOfWork
 from app.application.services.content_target_resolver import ContentTargetResolver
@@ -8,6 +8,7 @@ from app.application.services.course_content_access_service import CourseContent
 from app.domain.entities.comment import Comment
 from datetime import datetime , timezone
 from app.application.exceptions import PermissionDeniedError
+from app.application.dto.comments import CommentDTO
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,4 +65,10 @@ class CreateCommentUseCase:
             await self.uow.comments.add(comment)
             await self.uow.commit()
 
-        return comment
+        return CommentDTO(
+            id=comment.id,
+            user_id=comment.user_id,
+            text=comment.text,
+            created_at=comment.created_at,
+            updated_at=comment.updated_at,
+        )
