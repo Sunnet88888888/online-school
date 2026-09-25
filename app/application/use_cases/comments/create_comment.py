@@ -68,6 +68,8 @@ class CreateCommentUseCase:
         return CommentDTO(
             id=comment.id,
             user_id=comment.user_id,
+            target_type=comment.target.type,
+            target_id=comment.target.id,
             text=comment.text,
             created_at=comment.created_at,
             updated_at=comment.updated_at,

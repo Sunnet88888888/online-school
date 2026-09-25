@@ -11,6 +11,7 @@ from app.application.exceptions import (
     QuestionAttemptNotFoundError,
     QuestionNotFoundError,
     SectionNotFoundError,
+    CommentNotFoundError,
 )
 from app.domain.exceptions import DomainError
 from app.presentation.api.schemas import ErrorResponse
@@ -91,6 +92,21 @@ async def lecture_not_found_handler(request: Request, exc: Exception) -> JSONRes
         message=str(exc),
         status_code=status.HTTP_404_NOT_FOUND,
     )
+
+
+
+async def comment_not_found_handler(request: Request, exc: Exception) -> JSONResponse:
+    return build_error_response(
+        error="comment_not_found",
+        message=str(exc),
+        status_code=status.HTTP_404_NOT_FOUND,
+    )
+
+
+
+
+
+
 
 
 async def authentication_error_handler(
@@ -271,6 +287,8 @@ def register_exception_handlers(app: FastAPI) -> None:
     app.add_exception_handler(CodeSubmissionNotFoundError, code_submission_not_found_handler)
     app.add_exception_handler(CoursePublicationNotReadyError, course_publication_not_ready_handler)
     app.add_exception_handler(FileTooLargeError, file_too_large_handler, )
+    app.add_exception_handler(CommentNotFoundError, comment_not_found_handler, )
+    
 
 
 

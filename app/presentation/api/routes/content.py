@@ -405,7 +405,7 @@ async def create_comment(
     return CommentResponse.model_validate(comment)
 
 
-@router.put(
+@router.patch(
     "/comments/{comment_id}",
     response_model=CommentResponse,
     status_code=status.HTTP_200_OK,

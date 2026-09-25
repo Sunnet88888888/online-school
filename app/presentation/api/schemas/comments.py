@@ -3,7 +3,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-
+from app.domain.entities.comment import CommentTargetType
 
 class CreateCommentRequest(BaseModel):
     text: str = Field(
@@ -24,6 +24,8 @@ class CommentResponse(BaseModel):
     
     id: UUID
     user_id: UUID
+    target_type: CommentTargetType
+    target_id: UUID
     text: str
     created_at: datetime
     updated_at: datetime | None

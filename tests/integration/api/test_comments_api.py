@@ -683,11 +683,11 @@ async def test_admin_can_delete_other_users_comment(
 
 
 @pytest.mark.asyncio
-async def test_delete_missing_comment_returns_400(client, admin_auth_headers):
+async def test_delete_missing_comment_returns_404(client, admin_auth_headers):
     response = await client.delete(
         f'/api/comments/{uuid4()}',
         headers=admin_auth_headers,
     )
 
-    assert response.status_code == 400
+    assert response.status_code == 404
     assert response.json()['error'] == 'application_error'
